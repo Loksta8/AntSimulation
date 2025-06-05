@@ -25,6 +25,8 @@ The current simulation includes the following features:
 * **Automatic & Manual Simulation Reset**: The simulation will restart after a set delay if all food is gone or all ants die, or if the user presses the 'R' key.
 * **Mouse & Keyboard Functionality**: Zooming in and out, and panning work via mouse scroll wheel, mouse click-hold-and-drag, and arrow keys (Up/Down for zoom, Left/Right/A/D/W/S for pan).
 
+![Ant Simulation GIF](https://raw.githubusercontent.com/Loksta8/AntSimulation/main/AntSim.gif)
+
 ## 🚀 Getting Started
 1. Clone the repository: `git clone https://github.com/Loksta8/AntSimulation`
 2. Follow the platform-specific build instructions below.
