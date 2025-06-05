@@ -23,44 +23,15 @@
 #include <fstream>
 
 
-std::string generateVerificationHash() {
-    std::string original_identifier = "Logan_Ant_Simulation_V1";
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(original_identifier.c_str()), original_identifier.size(), hash);
-
-    std::ostringstream hash_str;
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        hash_str << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
-    }
-
-    // Write the hash to a file
-    std::ofstream file("verification.txt");
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open verification.txt for writing!" << std::endl;
-        return ""; // Return an empty string to indicate failure
-    }
-
-    file << hash_str.str();
-    file.close();
-
-    return hash_str.str();
-}
-
 std::string getStoredVerificationHash() {
     std::ifstream file("verification.txt");
     std::string hash;
-
     if (file) {
         file >> hash;
     }
     else {
-        // Generate a new hash and create verification.txt
-        hash = generateVerificationHash();
-        std::ofstream newFile("verification.txt");
-        if (newFile.is_open()) {
-            newFile << hash;
-            newFile.close();
-        }
+        std::cerr << "Warning: verification.txt missing! Commit required to update hash." << std::endl;
+        hash = "UNKNOWN";
     }
     return hash;
 }

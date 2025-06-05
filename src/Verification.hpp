@@ -19,7 +19,7 @@
 
 #include <string>
 
-std::string generateVerificationHash();
+
 std::string getStoredVerificationHash();
 
 #endif
