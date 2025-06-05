@@ -36,36 +36,39 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 # ---------------------------
-# Copy Font File to Output
+# Copy Resource Files to Output
 # ---------------------------
 
-# Define font files
-set(FONT_FILES
-    Vertiky.ttf
+# Define all resource files that the executable needs at runtime
+set(RESOURCE_FILES
+    "Fonts/Vertiky.ttf"
+    "verification.txt"
 )
 
-# Custom target to copy fonts
-add_custom_target(copy_fonts ALL)
+# Custom target to copy all resources to the output directory after a build
+add_custom_target(copy_resources ALL)
 
-foreach(font ${FONT_FILES})
+foreach(resource ${RESOURCE_FILES})
     # Use generator expressions for cross-platform compatibility
     if(CMAKE_CONFIGURATION_TYPES)
         # Multi-config generators (Visual Studio, Xcode)
+        # Copies to bin/Debug/ or bin/Release/
         add_custom_command(
-            TARGET copy_fonts POST_BUILD
+            TARGET copy_resources POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${CMAKE_CURRENT_SOURCE_DIR}/Fonts/${font}
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/${font}
-            COMMENT "Copying font ${font} to output directory"
+                ${CMAKE_CURRENT_SOURCE_DIR}/${resource}
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/${resource}
+            COMMENT "Copying resource ${resource} to output directory"
         )
     else()
         # Single-config generators (Make, Ninja)
+        # Copies to bin/
         add_custom_command(
-            TARGET copy_fonts POST_BUILD
+            TARGET copy_resources POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${CMAKE_CURRENT_SOURCE_DIR}/Fonts/${font}
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${font}
-            COMMENT "Copying font ${font} to output directory"
+                ${CMAKE_CURRENT_SOURCE_DIR}/${resource}
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${resource}
+            COMMENT "Copying resource ${resource} to output directory"
         )
     endif()
 endforeach()
@@ -93,7 +96,7 @@ find_package(OpenSSL REQUIRED)
 target_link_libraries(main PRIVATE sfml-graphics OpenSSL::SSL OpenSSL::Crypto)
 
 # Make sure fonts are copied before building the app
-add_dependencies(main copy_fonts)
+add_dependencies(main copy_resources)
 
 # ---------------------------
 # Platform-specific post-build steps
