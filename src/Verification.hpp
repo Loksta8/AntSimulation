@@ -18,8 +18,88 @@
 #define VERIFICATION_HPP
 
 #include <string>
+#include <vector>
+
+/**
+ * @class ValidationLogger
+ * @brief Handles logging of verification operations with log rotation
+ */
+class ValidationLogger {
+public:
+    /**
+     * @brief Get the singleton instance of ValidationLogger
+     * @return Reference to the ValidationLogger instance
+     */
+    static ValidationLogger& getInstance();
+    
+    /**
+     * @brief Log a validation event
+     * @param filename The name of the file being validated
+     * @param hash The hash value
+     * @param isValid Whether the validation was successful
+     */
+    void logValidation(const std::string& filename, const std::string& hash, bool isValid);
+    
+    // Delete copy constructor and assignment operator
+    ValidationLogger(const ValidationLogger&) = delete;
+    ValidationLogger& operator=(const ValidationLogger&) = delete;
+
+private:
+    // Private constructor for singleton pattern
+    ValidationLogger();
+    
+    // Check if log rotation is needed and perform it if necessary
+    void rotateLogIfNeeded();
+    
+    const std::string logFilename = "validation_history_log.txt";
+    const size_t maxLogSizeBytes = 5 * 1024 * 1024; // 5 MB max size
+    const int maxBackupFiles = 5; // Keep 5 backup files
+};
+
+/**
+ * @class Verification
+ * @brief Handles verification operations for the application
+ * 
+ * This class works with the git hook system that automatically updates
+ * the verification.txt file with a new hash on each commit.
+ */
+class Verification {
+public:
+    /**
+     * @brief Get the singleton instance of Verification
+     * @return Reference to the Verification instance
+     */
+    static Verification& getInstance();
+    
+    /**
+     * @brief Get the stored verification hash from verification.txt
+     * @return The stored hash or "UNKNOWN" if file is missing
+     * 
+     * This hash is automatically updated by git hooks on each commit.
+     */
+    std::string getStoredVerificationHash();
+    
+    /**
+     * @brief Verify the application integrity using the stored hash
+     * @return True if verification succeeds, false otherwise
+     */
+    bool verifyApplicationIntegrity();
+    
+    // Delete copy constructor and assignment operator
+    Verification(const Verification&) = delete;
+    Verification& operator=(const Verification&) = delete;
+
+private:
+    // Private constructor for singleton pattern
+    Verification();
+    
+    // Reference to the validation logger
+    ValidationLogger& logger;
+    
+    // The verification file path
+    const std::string verificationFile = "verification.txt";
+};
 
 
-std::string getStoredVerificationHash();
 
 #endif

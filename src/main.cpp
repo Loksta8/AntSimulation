@@ -52,8 +52,20 @@ constexpr float CELL_SIZE = static_cast<float>(WINDOW_WIDTH) / Environment::GRID
 const float INITIAL_DEFAULT_ZOOM_OUT = 1.4f; // Default zoom level
 
 int main() {
-    std::cout << "Stored Verification Hash: " << getStoredVerificationHash() << std::endl;
-
+    // Get the verification instance
+    Verification& verifier = Verification::getInstance();
+    
+    // Get the stored verification hash (updated by git hooks)
+    std::string storedHash = verifier.getStoredVerificationHash();
+    std::cout << "Application verification hash: " << storedHash << std::endl;
+    
+    // Verify application integrity
+    if (verifier.verifyApplicationIntegrity()) {
+        std::cout << "Application integrity verified!" << std::endl;
+    } else {
+        std::cout << "Application integrity check failed!" << std::endl;
+        // You might want to take action here, like exiting the application
+    }
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Ant Colony Simulation");
     window.setFramerateLimit(60);
