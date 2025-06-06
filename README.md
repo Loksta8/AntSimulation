@@ -175,16 +175,47 @@ Vertiky.ttf is bundled with the project and automatically placed next to the exe
 **Build System Features**:
 - Cross-platform CMake configuration with platform-specific optimizations
 - Automatic dependency fetching for SFML via CMake FetchContent
-- Smart font copying that works with both single-config (Make/Ninja) and multi-config (Visual Studio) generators
+- Smart resource copying that works with both single-config (Make/Ninja) and multi-config (Visual Studio) generators
 - RPATH configuration on Linux for better shared library handling
 
 ## 📜 License  
 [![GPLv3 License](https://www.gnu.org/graphics/gplv3-88x31.png)](https://www.gnu.org/licenses/gpl-3.0.html)
 This project is licensed under the **GNU GPL v3**. See the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing  
+## 🤝 Contributing
 
-This project is open for learning and exploration! While there are no strict contribution requirements, here are a few ways to get involved:  
+This project is open for learning and exploration! Here are a few ways to get involved:  
+We welcome contributions to the Ant Simulation project! To ensure code integrity across platforms, we've implemented an automated verification system.
+
+Getting Started
+
+    Clone the repository
+    Run the included setup script:
+
+    python setup_hooks.py
+
+    This configures the necessary git hooks for the verification system.
+
+How the Verification System Works
+
+Our verification system maintains code integrity through the following process:
+
+    Pre-commit Hook: Automatically detects changes to source files
+    Hash Generation: Updates the hash value in verification.txt when changes are detected
+    Automatic Inclusion: Adds the updated verification.txt to your commit
+    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable and generates a validation_history_log.txt in your build directory
+
+This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed.
+Contribution Workflow
+
+    Make your code changes
+    Commit your changes (the hook handles verification automatically)
+    Push your changes (including the updated verification hash)
+    Submit a pull request
+
+The verification system will help maintain project integrity across different development environments and platforms.
+
+
 
 ### 🐜 How to Contribute  
 1. **Fork the repository** and clone your version.  
