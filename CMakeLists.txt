@@ -1,4 +1,4 @@
-﻿# AntSimulation - An SFML simulation of an ant colony.
+# AntSimulation - An SFML simulation of an ant colony.
 # Copyright (C) 2025 Logan Herrera <jherre36@live.nmhu.edu>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -50,6 +50,9 @@ add_custom_target(copy_resources ALL)
 
 foreach(resource ${RESOURCE_FILES})
     # Use generator expressions for cross-platform compatibility
+    # Get just the filename part
+    get_filename_component(filename ${resource} NAME)
+    
     if(CMAKE_CONFIGURATION_TYPES)
         # Multi-config generators (Visual Studio, Xcode)
         # Copies to bin/Debug/ or bin/Release/
@@ -57,7 +60,7 @@ foreach(resource ${RESOURCE_FILES})
             TARGET copy_resources POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_CURRENT_SOURCE_DIR}/${resource}
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/${resource}
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/${filename}
             COMMENT "Copying resource ${resource} to output directory"
         )
     else()
@@ -67,7 +70,7 @@ foreach(resource ${RESOURCE_FILES})
             TARGET copy_resources POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_CURRENT_SOURCE_DIR}/${resource}
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${resource}
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${filename}
             COMMENT "Copying resource ${resource} to output directory"
         )
     endif()
@@ -133,6 +136,6 @@ install(TARGETS main
     RUNTIME DESTINATION bin
 )
 
-install(FILES ${FONT_FILES}
+install(FILES ${RESOURCE_FILES}
     DESTINATION bin
 )
