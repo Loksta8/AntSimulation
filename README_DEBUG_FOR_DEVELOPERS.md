@@ -1,4 +1,4 @@
-# 🐜 Ant Simulation
+# 🐜 Ant Simulation - Debug/Development Version
 
 ![Cross-Platform](https://img.shields.io/badge/Cross%20Platform-Windows%20%7C%20Linux-success)
 ![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
@@ -28,8 +28,29 @@ The current simulation includes the following features:
 ![Ant Simulation GIF](https://raw.githubusercontent.com/Loksta8/AntSimulation/main/AntSim.gif)
 
 ## 🚀 Getting Started
-* **For Users**: If you want to run the simulation directly, please refer to the [Release Documentation](https://github.com/Loksta8/AntSimulation/releases).
-* **For Developers**: If you want to build from source, contribute, or dive into the code, please see the [Development/Debug Documentation](README_DEBUG_FOR_DEVELOPERS.md).
+
+1.  Clone the repository: `git clone https://github.com/Loksta8/AntSimulation`
+2.  Follow the platform-specific build instructions below.
+3.  Run the simulation via `./bin/main` (Linux) or `AntSimulation.exe` (Windows).
+
+## 🎮 Simulation Controls (Detailed)
+
+This section explains all controls for navigating and interacting with the Ant Simulation.
+
+* **Zoom In/Out**:
+    * **Mouse Scroll Wheel**: Scroll up to zoom in, scroll down to zoom out.
+    * **Up Arrow Key**: Zoom in.
+    * **Down Arrow Key**: Zoom out.
+* **Pan View (Move Camera)**:
+    * **Mouse Click-Hold-and-Drag**: Click and hold the left mouse button, then drag the mouse to move the view.
+    * **Left Arrow Key**: Pan left.
+    * **Right Arrow Key**: Pan right.
+    * **'A' Key**: Pan left.
+    * **'D' Key**: Pan right.
+    * **'W' Key**: Pan up.
+    * **'S' Key**: Pan down.
+* **Reset Simulation**:
+    * **'R' Key**: Manually reset the simulation to its initial state. The simulation also auto-resets after a delay if all food is gone or all ants die.
 
 ## 🛠️ Building the Project
 
@@ -48,7 +69,7 @@ These steps assume you are using Visual Studio.
 
 1.  **Clone the Repository ✨**:
     ```bash
-    git clone https://github.com/Loksta8/AntSimulation
+    git clone [https://github.com/Loksta8/AntSimulation](https://github.com/Loksta8/AntSimulation)
     cd AntSimulation
     ```
 
@@ -68,21 +89,21 @@ These steps assume you are using Visual Studio.
     **Option B: Using Command Line (Developer Command Prompt for VS) 💻**
     * Open a "Developer Command Prompt for VS 2022" (or your corresponding Visual Studio version). This ensures that CMake can find your C++ compiler and other build tools. You can find this in your Start Menu.
     * Navigate to the root directory of your cloned repository:
-      ```batch
-      cd C:\path\to\AntSimulation
-      ```
+        ```batch
+        cd C:\path\to\AntSimulation
+        ```
     * Create a build directory and navigate into it:
-      ```batch
-      mkdir build
-      cd build
-      ```
+        ```batch
+        mkdir build
+        cd build
+        ```
     * Run CMake to configure and generate the Visual Studio solution. Replace `"Visual Studio 17 2022"` if you are using a different version. For a 64-bit build, you can specify the architecture with `-A x64`.
-      ```batch
-      cmake -G "Visual Studio 17 2022" -A x64 ..
-      ```
-      * `-G "Visual Studio 17 2022"`: Specifies the generator.
-      * `-A x64`: Specifies the target architecture as 64-bit. For 32-bit, you might use `-A Win32` (though 64-bit is more common now). If you omit `-A`, CMake might pick a default based on your VS installation.
-      * `..`: Points to the parent directory (which is the source directory containing your root `CMakeLists.txt`).
+        ```batch
+        cmake -G "Visual Studio 17 2022" -A x64 ..
+        ```
+        * `-G "Visual Studio 17 2022"`: Specifies the generator.
+        * `-A x64`: Specifies the target architecture as 64-bit. For 32-bit, you might use `-A Win32` (though 64-bit is more common now). If you omit `-A`, CMake might pick a default based on your VS installation.
+        * `..`: Points to the parent directory (which is the source directory containing your root `CMakeLists.txt`).
 
 3.  **Open and Build in Visual Studio 🏗️**:
     * After either GUI or command-line generation, navigate to your `build` directory. You will find a Visual Studio Solution file (`.sln`), for example, `AntSimulation.sln`.
@@ -134,7 +155,7 @@ These steps assume you are using Visual Studio.
 
 2.  **Clone the Repository (if not already done) ✨**:
     ```bash
-    git clone https://github.com/Loksta8/AntSimulation
+    git clone [https://github.com/Loksta8/AntSimulation](https://github.com/Loksta8/AntSimulation)
     cd AntSimulation
     ```
 
@@ -217,16 +238,16 @@ The verification system will help maintain project integrity across different de
 
 
 ### 🐜 How to Contribute  
-1. **Fork the repository** and clone your version.  
-2. **Explore the code** and get familiar with how the ant simulation works.  
-3. **Suggest improvements**: Whether it's optimizing algorithms, refining ant behaviors, or adding new features, feel free to propose ideas! I would like to make soldier ants eventually!
-4. **Submit a pull request** if you make meaningful changes.  
+1.  **Fork the repository** and clone your version.  
+2.  **Explore the code** and get familiar with how the ant simulation works.  
+3.  **Suggest improvements**: Whether it's optimizing algorithms, refining ant behaviors, or adding new features, feel free to propose ideas! I would like to make soldier ants eventually!
+4.  **Submit a pull request** if you make meaningful changes.  
 
 ### 🚀 Ideas for Contributors  
-- Improve pheromone decay mechanics for more realistic foraging.  
-- Implement inter-colony interactions or competition.
-- Add UI enhancements for easier metric tracking.  
-- Optimize performance for larger-scale simulations.  
-- Expand documentation with deeper explanations or diagrams.  
+-   Improve pheromone decay mechanics for more realistic foraging.  
+-   Implement inter-colony interactions or competition.
+-   Add UI enhancements for easier metric tracking.  
+-   Optimize performance for larger-scale simulations.  
+-   Expand documentation with deeper explanations or diagrams.  
 
 If you just want to **ask questions or brainstorm ideas**, opening a discussion or issue is always welcome! Thanks and enjoy the ants. I've been keeping it running as a screen saver haha! 🖥️🐜💾
