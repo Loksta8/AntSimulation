@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# --- pre-commit hook ---
+# This script generates a hash of all staged content before a commit is made.
+
+# Define the name of your verification file
+VERIFICATION_FILE="verification.txt"
+
+# Get a list of all staged files, excluding our own verification file
+staged_files=$(git diff --cached --name-only | grep -v "^${VERIFICATION_FILE}$")
+
+# If there are no staged files other than the verification file, exit
+if [ -z "$staged_files" ]; then
+    echo "No files to hash. Skipping verification update."
+    exit 0
+fi
+
+echo "Generating verification hash for staged files..."
+
+# Calculate a new hash based on the content of all staged files
+# This approach creates a more reliable hash of the staged content
+NEW_HASH=$(
+    for file in $staged_files; do
+        echo "File: $file"
+        git show ":$file" | sha256sum
+    done | sha256sum | awk '{print $1}'
+)
+
+echo "Generated hash: $NEW_HASH"
+
+# Get the last-known hash from the verification file (if it exists)
+CURRENT_HASH=$(cat "$VERIFICATION_FILE" 2>/dev/null || echo "")
+echo "Current hash: $CURRENT_HASH"
+
+# Only update the file if the hash has actually changed
+if [[ "$CURRENT_HASH" != "$NEW_HASH" ]]; then
+    echo "Hash has changed. Updating $VERIFICATION_FILE"
+    echo "$NEW_HASH" > "$VERIFICATION_FILE"
+    
+    # Add the updated verification file to this commit
+    git add "$VERIFICATION_FILE"
+    echo "Added $VERIFICATION_FILE to commit"
+else
+    echo "Staged content has not changed. No update needed."
+fi
+
+# Exit with 0 to allow the commit to proceed
+exit 0
+
