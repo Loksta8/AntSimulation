@@ -1,5 +1,5 @@
 # 🐜 Ant Simulation
-
+[![CMake on multiple platforms](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
 ![Cross-Platform](https://img.shields.io/badge/Cross%20Platform-Windows%20%7C%20Linux-success)
 [![Simulation Project](https://img.shields.io/badge/Type-Simulation-green)](https://github.com/Loksta8/AntSimulation)
 ![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
