@@ -4,7 +4,7 @@
 [![Simulation Project](https://img.shields.io/badge/Type-Simulation-green)](https://github.com/Loksta8/AntSimulation)
 ![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg) 
-
+ 
 
 **🎯 PURPOSE**:
 To simulate an ant colony in search of food using SFML for graphics.
