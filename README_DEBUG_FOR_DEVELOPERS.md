@@ -14,6 +14,7 @@ To simulate an ant colony in search of food using SFML for graphics.
 
 
 The current simulation includes the following features:
+* **Code Integrity Verification**: Automated system using Git hooks and CI to ensure codebase consistency across all development environments.
 * **Variable Food Amounts**: Food sources are depleted gradually as ants find the food and take it back to their colony.
 * **Ant Lifespan & Death**: Ants have a finite lifespan and are removed upon death. Gradually the ants die off.
 * **Multiple Colonies**: The simulation supports multiple independent ant colonies, each with distinct colors. They currently do not interact yet.
@@ -212,9 +213,11 @@ Getting Started
     Clone the repository
     Run the included setup script:
 
+    ```bash
     python setup_hooks.py
+    ```
 
-    This configures the necessary git hooks for the verification system.
+    This script copies the pre-commit hook (which enforces our verification system) into your local `.git/hooks/` directory and makes it executable. This automates the setup of the crucial Git hook that maintains code integrity.
 
 How the Verification System Works
 
