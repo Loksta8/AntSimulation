@@ -28,23 +28,21 @@ esac
 if command -v apt-get &> /dev/null; then
     echo "Detected apt (Debian/Ubuntu-based system)."
     sudo apt-get update
-    # Added libssl-dev and libsfml-dev
     sudo apt-get install -y build-essential cmake git \
-                           libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev \
-                           libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev \
-                           libssl-dev libsfml-dev
+                            libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev \
+                            libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev \
+                            libsfml-dev
 elif command -v dnf &> /dev/null; then
     echo "Detected dnf (Fedora-based system)."
-    # Added openssl-devel and SFML-devel
     sudo dnf install -y gcc-c++ cmake git \
-                       mesa-libGL-devel libXrandr-devel libXcursor-devel \
-                       systemd-devel openal-soft-devel libflac-devel \
-                       libvorbis-devel freetype-devel \
-                       openssl-devel SFML-devel
+                        mesa-libGL-devel libXrandr-devel libXcursor-devel \
+                        systemd-devel openal-soft-devel libflac-devel \
+                        libvorbis-devel freetype-devel \
+                        SFML-devel
 else
     echo "Could not detect a supported package manager (apt or dnf)."
     echo "Please install dependencies manually as per the README.md."
-    echo "Essential dependencies usually include: a C++ compiler, CMake, Git, OpenSSL development files, and SFML development files (or its individual dependencies like OpenGL, OpenAL, FreeType, X11 libs, etc.)."
+    echo "Essential dependencies usually include: a C++ compiler, CMake, Git, and SFML development files (or its individual dependencies like OpenGL, OpenAL, FreeType, X11 libs, etc.)."
     exit 1
 fi
 

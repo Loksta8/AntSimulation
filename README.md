@@ -203,9 +203,9 @@ Our verification system maintains code integrity through the following process:
     Pre-commit Hook: Automatically detects changes to source files
     Hash Generation: Updates the hash value in verification.txt when changes are detected
     Automatic Inclusion: Adds the updated verification.txt to your commit
-    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable and generates a validation_history_log.txt in your build directory
+    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable in your build directory.
 
-This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed.
+This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification file remains in your build directory and don't need to be manually managed.
 Contribution Workflow
 
     Make your code changes

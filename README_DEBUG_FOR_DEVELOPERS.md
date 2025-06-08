@@ -140,17 +140,17 @@ These steps assume you are using Visual Studio.
 
         **Ubuntu/Debian:**
         ```bash
-        sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libssl-dev libsfml-dev
+        sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libsfml-dev
         ```
 
         **Fedora:**
         ```bash
-        sudo dnf install mesa-libGL-devel libXrandr-devel libXcursor-devel systemd-devel openal-soft-devel libflac-devel libvorbis-devel freetype-devel openssl-devel SFML-devel
+        sudo dnf install mesa-libGL-devel libXrandr-devel libXcursor-devel systemd-devel openal-soft-devel libflac-devel libvorbis-devel freetype-devel SFML-devel
         ```
 
         **Arch Linux:**
         ```bash
-        sudo pacman -Syu glu libxrandr libxcursor systemd openal flac libvorbis freetype2 openssl sfml
+        sudo pacman -Syu glu libxrandr libxcursor systemd openal flac libvorbis freetype2 sfml
         ```
 
 2.  **Clone the Repository (if not already done) ✨**:
@@ -187,7 +187,7 @@ This project runs **seamlessly** on both **Windows** and **Linux**, ensuring acc
 `C++17`  
 
 **Dependencies**:  
-`SFML 2.6`, `OpenSSL`, `Vertiky.ttf`  
+`SFML 2.6`, `Vertiky.ttf`  
 
 **Font Requirement**:  
 Vertiky.ttf is bundled with the project and automatically placed next to the executable during the build process. No manual setup is needed.
@@ -223,7 +223,7 @@ Our verification system maintains code integrity through the following process:
     Pre-commit Hook: Automatically detects changes to source files
     Hash Generation: Updates the hash value in verification.txt when changes are detected
     Automatic Inclusion: Adds the updated verification.txt to your commit
-    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable and generates a validation_history_log.txt in your build directory
+    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable in your build directory
 
 This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed.
 Contribution Workflow
