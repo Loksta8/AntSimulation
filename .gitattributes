@@ -1,2 +1,14 @@
-* text=auto
+# Standardize line endings for all text files
+* text=auto eol=lf
+
+# Explicitly ensure certain files are LF
+*.txt text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+*.c text eol=lf
+*.cmake text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
 *.sh text eol=lf
+# Add other text-based file extensions here
