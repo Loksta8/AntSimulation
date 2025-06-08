@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// checking test for CI workflow
 #include <SFML/Graphics.hpp>
 #include "Ant.hpp"
 #include "Colony.hpp"
