@@ -84,19 +84,7 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp)
 
 add_executable(main ${SRC_FILES})
 
-# ---------------------------
-# OpenSSL Configuration
-# ---------------------------
-
-# Platform-specific OpenSSL configuration
-if(WIN32)
-    set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-Win64")
-    set(OPENSSL_INCLUDE_DIR "${OPENSSL_ROOT_DIR}/include")
-    set(OPENSSL_LIBRARIES "${OPENSSL_ROOT_DIR}/lib")
-endif()
-
-find_package(OpenSSL REQUIRED)
-target_link_libraries(main PRIVATE sfml-graphics OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(main PRIVATE sfml-graphics)
 
 # Make sure fonts are copied before building the app
 add_dependencies(main copy_resources)
