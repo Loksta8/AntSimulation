@@ -130,7 +130,7 @@ These steps assume you are using Visual Studio.
         # For Arch Linux based systems
         sudo pacman -Syu base-devel cmake git
         ```
-    * **SFML and OpenSSL Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries, and the project also requires OpenSSL. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the below for you or you can run the commands manually as below:
+    * **SFML Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the manual part for you or you can run the commands manually see below:
     
         **Shell Script (Recommended):**
         ```bash
