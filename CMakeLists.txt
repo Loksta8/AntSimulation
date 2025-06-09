@@ -42,6 +42,7 @@ FetchContent_MakeAvailable(SFML)
 # Define all resource files that the executable needs at runtime
 set(RESOURCE_FILES
     "Fonts/Vertiky.ttf"
+    "verification.txt"
 )
 
 # Custom target to copy all resources to the output directory after a build
@@ -85,7 +86,7 @@ add_executable(main ${SRC_FILES})
 
 target_link_libraries(main PRIVATE sfml-graphics)
 
-# Make sure resources are copied before building the app
+# Make sure fonts are copied before building the app
 add_dependencies(main copy_resources)
 
 # ---------------------------

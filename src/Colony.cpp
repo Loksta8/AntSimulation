@@ -99,7 +99,7 @@ void Colony::update(Environment& env, const std::vector<Colony>& allColonies) {
     updatePheromones();
 }
 
-// --- Colony Pheromone management methods
+// Colony Pheromone management methods
 void Colony::addFoodPheromone(int gridX, int gridY, float amount) {
     if (gridX >= 0 && gridX < Environment::GRID_SIZE && gridY >= 0 && gridY < Environment::GRID_SIZE) {
         foodPheromones[gridX][gridY] += amount; // Access using std::vector syntax

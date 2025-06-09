@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// test
+
 #include <SFML/Graphics.hpp>
 #include "Ant.hpp"
 #include "Colony.hpp"
@@ -136,7 +136,7 @@ int main() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-	    // Window resizing
+
             if (event.type == sf::Event::Resized) {
                 float windowRatio = static_cast<float>(event.size.width) / static_cast<float>(event.size.height);
                 float viewAspectRatio = view.getSize().x / view.getSize().y;

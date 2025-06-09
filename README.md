@@ -4,7 +4,7 @@
 [![Simulation Project](https://img.shields.io/badge/Type-Simulation-green)](https://github.com/Loksta8/AntSimulation)
 ![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg) 
- 
+
 
 **🎯 PURPOSE**:
 To simulate an ant colony in search of food using SFML for graphics.
@@ -24,7 +24,6 @@ The current simulation includes the following features:
 * **Refined Ant Foraging Behavior**: Ants now return home more directly and efficiently after finding food.
 * **Automatic & Manual Simulation Reset**: The simulation will restart after a set delay if all food is gone or all ants die, or if the user presses the 'R' key.
 * **Mouse & Keyboard Functionality**: Zooming in and out, and panning work via mouse scroll wheel, mouse click-hold-and-drag, and arrow keys (Up/Down for zoom, Left/Right/A/D/W/S for pan).
-* **Code Integrity Verification**: Automated system using Git hooks and CI to ensure codebase consistency across all development environments.
 
 ![Ant Simulation GIF](https://raw.githubusercontent.com/Loksta8/AntSimulation/main/AntSim.gif)
 
@@ -109,7 +108,7 @@ These steps assume you are using Visual Studio.
         # For Arch Linux based systems
         sudo pacman -Syu base-devel cmake git
         ```
-    * **SFML Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the below for you or you can run the commands manually as below:
+    * **SFML and OpenSSL Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries, and the project also requires OpenSSL. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the below for you or you can run the commands manually as below:
     
         **Shell Script (Recommended):**
         ```bash
@@ -120,17 +119,17 @@ These steps assume you are using Visual Studio.
 
         **Ubuntu/Debian:**
         ```bash
-        sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libsfml-dev
+        sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libssl-dev libsfml-dev
         ```
 
         **Fedora:**
         ```bash
-        sudo dnf install mesa-libGL-devel libXrandr-devel libXcursor-devel systemd-devel openal-soft-devel libflac-devel libvorbis-devel freetype-devel SFML-devel
+        sudo dnf install mesa-libGL-devel libXrandr-devel libXcursor-devel systemd-devel openal-soft-devel libflac-devel libvorbis-devel freetype-devel openssl-devel SFML-devel
         ```
 
         **Arch Linux:**
         ```bash
-        sudo pacman -Syu glu libxrandr libxcursor systemd openal flac libvorbis freetype2 sfml
+        sudo pacman -Syu glu libxrandr libxcursor systemd openal flac libvorbis freetype2 openssl sfml
         ```
 
 2.  **Clone the Repository (if not already done) ✨**:
@@ -167,7 +166,7 @@ This project runs **seamlessly** on both **Windows** and **Linux**, ensuring acc
 `C++17`  
 
 **Dependencies**:  
-`SFML 2.6`, `Vertiky.ttf`  
+`SFML 2.6`, `OpenSSL`, `Vertiky.ttf`  
 
 **Font Requirement**:  
 Vertiky.ttf is bundled with the project and automatically placed next to the executable during the build process. No manual setup is needed.
@@ -192,23 +191,20 @@ Getting Started
     Clone the repository
     Run the included setup script:
 
-    ```bash
     python setup_hooks.py
-    ```
 
-    This script copies the pre-commit hook (which enforces our verification system) into your local `.git/hooks/` directory and makes it executable. This automates the setup of the crucial Git hook that maintains code integrity.
+    This configures the necessary git hooks for the verification system.
 
 How the Verification System Works
 
 Our verification system maintains code integrity through the following process:
 
-* **Pre-commit Hook (`.git/hooks/pre-commit`):** An automatically installed Git hook that runs before each commit.
-* **Hash Generation:** This hook calculates a unique hash of the entire repository's codebase (excluding the verification file itself) using a robust, cross-platform consistent method.
-* **`verification.txt` Update:** If the calculated hash differs from the one stored in `verification.txt`, the hook automatically updates `verification.txt` with the new hash.
-* **Automatic Inclusion:** The updated `verification.txt` is automatically added to your commit.
-* **CI Integration:** Our Continuous Integration (CI) pipeline on GitHub Actions performs the same hash calculation. If the hash calculated by CI does not match the one in the committed `verification.txt` (indicating an outdated verification file or an inconsistent codebase), the build will fail, ensuring integrity across all development environments.
+    Pre-commit Hook: Automatically detects changes to source files
+    Hash Generation: Updates the hash value in verification.txt when changes are detected
+    Automatic Inclusion: Adds the updated verification.txt to your commit
+    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable in your build directory.
 
-This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification file remains in your build directory it does not need to be manually managed.
+This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification file remains in your build directory and don't need to be manually managed.
 Contribution Workflow
 
     Make your code changes

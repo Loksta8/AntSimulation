@@ -14,7 +14,6 @@ To simulate an ant colony in search of food using SFML for graphics.
 
 
 The current simulation includes the following features:
-* **Code Integrity Verification**: Automated system using Git hooks and CI to ensure codebase consistency across all development environments.
 * **Variable Food Amounts**: Food sources are depleted gradually as ants find the food and take it back to their colony.
 * **Ant Lifespan & Death**: Ants have a finite lifespan and are removed upon death. Gradually the ants die off.
 * **Multiple Colonies**: The simulation supports multiple independent ant colonies, each with distinct colors. They currently do not interact yet.
@@ -130,7 +129,7 @@ These steps assume you are using Visual Studio.
         # For Arch Linux based systems
         sudo pacman -Syu base-devel cmake git
         ```
-    * **SFML Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the manual part for you or you can run the commands manually see below:
+    * **SFML and OpenSSL Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries, and the project also requires OpenSSL. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the below for you or you can run the commands manually as below:
     
         **Shell Script (Recommended):**
         ```bash
@@ -213,11 +212,9 @@ Getting Started
     Clone the repository
     Run the included setup script:
 
-    ```bash
     python setup_hooks.py
-    ```
 
-    This script copies the pre-commit hook (which enforces our verification system) into your local `.git/hooks/` directory and makes it executable. This automates the setup of the crucial Git hook that maintains code integrity.
+    This configures the necessary git hooks for the verification system.
 
 How the Verification System Works
 
