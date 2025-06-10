@@ -1,0 +1,19 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "default-windows",
+      "displayName": "Windows Default",
+      "description": "Default configuration for Windows with vcpkg",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "VCPKG_ROOT": "C:/vcpkg"
+      }
+    }
+  ]
+}
