@@ -1,8 +1,8 @@
 # 🐜 Ant Simulation
-[![CMake on multiple platforms](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
+
 ![Cross-Platform](https://img.shields.io/badge/Cross%20Platform-Windows%20%7C%20Linux-success)
-[![Simulation Project](https://img.shields.io/badge/Type-Simulation-green)](https://github.com/Loksta8/AntSimulation)
 ![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
+![OpenSSL](https://img.shields.io/badge/Dependency-OpenSSL-green)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg) 
 
 
@@ -28,8 +28,9 @@ The current simulation includes the following features:
 ![Ant Simulation GIF](https://raw.githubusercontent.com/Loksta8/AntSimulation/main/AntSim.gif)
 
 ## 🚀 Getting Started
-* **For Users**: If you want to run the simulation directly, please refer to the [Release Documentation](https://github.com/Loksta8/AntSimulation/releases).
-* **For Developers**: If you want to build from source, contribute, or dive into the code, please see the [Development/Debug Documentation](README_DEBUG_FOR_DEVELOPERS.md).
+1. Clone the repository: `git clone https://github.com/Loksta8/AntSimulation`
+2. Follow the platform-specific build instructions below.
+3. Run the simulation via `./bin/main` (Linux) or `AntSimulation.exe` (Windows).
 
 ## 🛠️ Building the Project
 
@@ -202,9 +203,9 @@ Our verification system maintains code integrity through the following process:
     Pre-commit Hook: Automatically detects changes to source files
     Hash Generation: Updates the hash value in verification.txt when changes are detected
     Automatic Inclusion: Adds the updated verification.txt to your commit
-    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable in your build directory.
+    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable and generates a validation_history_log.txt in your build directory
 
-This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification file remains in your build directory and don't need to be manually managed.
+This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed.
 Contribution Workflow
 
     Make your code changes
