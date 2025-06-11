@@ -106,8 +106,8 @@ find_package(OpenSSL REQUIRED)
 
 # Add SFML's include directories so the compiler can find headers like SFML/Graphics.hpp
 target_include_directories(main PRIVATE
-    "${SFML_SOURCE_DIR}/include"      # For original SFML source headers
-    "${SFML_BINARY_DIR}/include"      # For any generated headers (less common for SFML but good practice)
+    "${SFML_SOURCE_DIR}/include"       # For original SFML source headers
+    "${SFML_BINARY_DIR}/include"       # For any generated headers (less common for SFML but good practice)
 )
 
 # Add SFML's library directories to the linker search path
@@ -119,16 +119,17 @@ link_directories(
 
 # Link the executable against the required libraries
 target_link_libraries(main PRIVATE
-    sfml-graphics   # For SFML/Graphics.hpp
-    sfml-window     # For windowing functionality
-    sfml-system     # For core system utilities
+    sfml-graphics    # For SFML/Graphics.hpp
+    sfml-window      # For windowing functionality
+    sfml-system      # For core system utilities
+    # Add other SFML modules if the project uses them (e.g., sfml-audio, sfml-network)
     
     # OpenSSL components provided by find_package(OpenSSL) from vcpkg
     OpenSSL::SSL
     OpenSSL::Crypto
 )
 
-# Make sure fonts are copied before building the app
+# Make sure resources are copied before building the app
 add_dependencies(main copy_resources)
 
 # ---------------------------
@@ -156,7 +157,7 @@ if(WIN32)
         COMMAND powershell -Command " \
             \$hash = (CertUtil -hashfile '$<TARGET_FILE:main>' SHA256)[1]; \
             \$hash = \$hash.Replace(' ',''); \
-            Set-Content -Path '${CMAKE_CURRENT_SOURCE_DIR}/build_verification.txt' -Value \$hash \
+            Set-Content -Path '${CMAKE_BINARY_DIR}/build_verification.txt' -Value \$hash \
         "
         COMMENT "Writing SHA256 hash of main executable to build_verification.txt"
     )
@@ -164,18 +165,17 @@ elseif(UNIX AND NOT APPLE)
     # Linux-specific configurations
     # Vcpkg's toolchain handles dependencies like Threads and RPATH for its installed libraries.
     # If build errors related to Threads or RPATH appear, re-add specific find_package/set_target_properties here if needed.
-    # Find threads package (often required on Linux)
-    #find_package(Threads REQUIRED)
-    #target_link_libraries(main PRIVATE Threads::Threads)
+    # find_package(Threads REQUIRED)
+    # target_link_libraries(main PRIVATE Threads::Threads)
     # Add RPATH for better library handling
-    #set_target_properties(main PROPERTIES
+    # set_target_properties(main PROPERTIES
     #    INSTALL_RPATH "$ORIGIN"
     #    BUILD_WITH_INSTALL_RPATH TRUE
-    #)
+    # )
     # Build Verification Hash on Unix (Linux/macOS)
     add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Generating build verification hash on Unix..."
-        COMMAND sha256sum $<TARGET_FILE:main> | cut -d ' ' -f 1 > ${CMAKE_CURRENT_SOURCE_DIR}/build_verification.txt
+        COMMAND sha256sum $<TARGET_FILE:main> | cut -d ' ' -f 1 > ${CMAKE_BINARY_DIR}/build_verification.txt
         COMMENT "Writing SHA256 hash of main executable to build_verification.txt"
     )
 endif()
@@ -193,7 +193,7 @@ install(FILES ${RESOURCE_FILES}
 )
 
 # Install the build verification file as well, if desired
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/build_verification.txt"
+install(FILES "${CMAKE_BINARY_DIR}/build_verification.txt" # Updated source path
     DESTINATION bin
     OPTIONAL # Don't fail if the file doesn't exist (e.g., if build fails before hash is generated)
 )
