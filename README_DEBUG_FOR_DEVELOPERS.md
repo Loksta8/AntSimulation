@@ -5,13 +5,11 @@
 ![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg) 
 
-
 **🎯 PURPOSE**:
 To simulate an ant colony in search of food using SFML for graphics.
 
 **💡 BACKGROUND**:
 - This project utilizes SFML for graphical rendering to create a realistic simulation of ant colony behavior. The goal is to model key characteristics such as foraging, pheromone trails, colony growth, and environmental interactions. I (Logan Herrera) am the original author of this project.
-
 
 The current simulation includes the following features:
 * **Variable Food Amounts**: Food sources are depleted gradually as ants find the food and take it back to their colony.
@@ -31,7 +29,7 @@ The current simulation includes the following features:
 
 1.  Clone the repository: `git clone https://github.com/Loksta8/AntSimulation`
 2.  Follow the platform-specific build instructions below.
-3.  Run the simulation via `./bin/main` (Linux) or `AntSimulation.exe` (Windows).
+3.  Run the simulation from your `build/` directory using `./bin/main` (Linux) or `./AntSimulation.exe` (Windows Debug/Release).
 
 ## 🎮 Simulation Controls (Detailed)
 
@@ -58,14 +56,14 @@ This section explains all controls for navigating and interacting with the Ant S
 
 * **CMake**: Version 3.28 or newer. Download from [cmake.org](https://cmake.org/download/).
 * **C++17 Compiler**:
-    * Windows: Visual Studio 2017 or newer (MSVC), or MinGW-w64.
+    * Windows: Visual Studio 2022 (MSVC).
     * Linux: GCC (g++) or Clang.
-    * macOS: Clang (Xcode Command Line Tools).
 * **Git**: For cloning the repository.
+* **Python 3**: Required for setting up Git hooks (see **Contributing** section).
 
 ### 🪟 Windows (Visual Studio)
 
-These steps assume you are using Visual Studio.
+These steps assume you are using Visual Studio 2022.
 
 1.  **Clone the Repository ✨**:
     ```bash
@@ -73,85 +71,69 @@ These steps assume you are using Visual Studio.
     cd AntSimulation
     ```
 
-2.  **Configure and Generate Project Files**:
-
-    You can use either the CMake GUI or the command line.
-
-    **Option A: Using CMake GUI ⚙️**
-    * Open CMake GUI.
-    * In "Where is the source code:", navigate to the root of the cloned repository (e.g., `C:/path/to/AntSimulation`).
-    * In "Where to build the binaries:", create a `build` folder (e.g., `C:/path/to/AntSimulation/build`) and point to that folder.
-    * Click "Configure".
-    * Choose your generator from the dropdown list (e.g., "Visual Studio 17 2022"). Ensure the "Platform for generator" is set correctly (e.g., x64 if you're building a 64-bit application).
-    * Click "Finish".
-    * Click "Generate".
-
-    **Option B: Using Command Line (Developer Command Prompt for VS) 💻**
-    * Open a "Developer Command Prompt for VS 2022" (or your corresponding Visual Studio version). This ensures that CMake can find your C++ compiler and other build tools. You can find this in your Start Menu.
-    * Navigate to the root directory of your cloned repository:
-        ```batch
-        cd C:\path\to\AntSimulation
+2.  **Set up Vcpkg for Dependencies**:
+    * **Clone Vcpkg**: Open an **Administrator Command Prompt** or **PowerShell** and navigate to your desired installation location (e.g., `C:\`).
+        ```bash
+        cd C:\
+        git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
+        cd vcpkg
         ```
-    * Create a build directory and navigate into it:
-        ```batch
-        mkdir build
-        cd build
+    * **Bootstrap Vcpkg**:
+        ```bash
+        .\bootstrap-vcpkg.bat
         ```
-    * Run CMake to configure and generate the Visual Studio solution. Replace `"Visual Studio 17 2022"` if you are using a different version. For a 64-bit build, you can specify the architecture with `-A x64`.
-        ```batch
-        cmake -G "Visual Studio 17 2022" -A x64 ..
+    * **Integrate Vcpkg with Visual Studio**:
+        ```bash
+        .\vcpkg integrate install
         ```
-        * `-G "Visual Studio 17 2022"`: Specifies the generator.
-        * `-A x64`: Specifies the target architecture as 64-bit. For 32-bit, you might use `-A Win32` (though 64-bit is more common now). If you omit `-A`, CMake might pick a default based on your VS installation.
-        * `..`: Points to the parent directory (which is the source directory containing your root `CMakeLists.txt`).
+    * **Install Dependencies**: Vcpkg manages OpenSSL. Your project's `vcpkg.json` automatically lists `openssl` for installation when CMake runs.
+        ```bash
+        # This command is technically optional as CMake will trigger it, but useful to know.
+        .\vcpkg.exe install openssl:x64-windows
+        ```
+        *Note: If you encounter permissions errors, ensure your Command Prompt/PowerShell is running as Administrator. If you face persistent issues, try reinstalling vcpkg to a simpler path like `C:\vcpkg` instead of `C:\Program Files\vcpkg`.*
 
-3.  **Open and Build in Visual Studio 🏗️**:
-    * After either GUI or command-line generation, navigate to your `build` directory. You will find a Visual Studio Solution file (`.sln`), for example, `AntSimulation.sln`.
-    * Open this `.sln` file in Visual Studio.
-    * Inside Visual Studio, right-click on the `main` target in the Solution Explorer and select "Set as Startup Project".
-    * Build the project (e.g., Build > Build Solution).
-    * Run the `main` project (e.g., Debug > Start Debugging, or click the green Play button ▶️).
+3.  **Configure CMake with `CMakePresets.json` ⚙️**:
+    This project uses `CMakePresets.json` for easy configuration across environments.
+    * **Open Visual Studio**: Launch Visual Studio 2022.
+    * **Open the Project**: Go to `File > Open > CMake...` and select the root directory of your cloned repository (e.g., `C:\path\to\AntSimulation`).
+    * **Select a Preset**: Visual Studio will automatically detect `CMakePresets.json`. In the toolbar, select the `Windows Default Build` preset (or "default-windows") from the "Presets" dropdown.
+    * **Configure**: Visual Studio will automatically configure CMake using the preset. You can monitor the "Output" window.
+    * *(Optional: If you prefer command line, open a "Developer Command Prompt for VS 2022", navigate to your project root, and run: `cmake --preset default-windows`)*
+
+4.  **Build in Visual Studio 🏗️**:
+    * Once CMake configuration is complete, your project should appear in the Solution Explorer.
+    * Right-click on the `main` target in the Solution Explorer and select "Set as Startup Project".
+    * Build the project (e.g., `Build > Build Solution` or `Ctrl+Shift+B`).
+
+5.  **Run the Simulation ▶️**:
+    * Run the `main` project directly from Visual Studio (e.g., `Debug > Start Debugging`, or click the green Play button ▶️).
+    * The executable (`AntSimulation.exe`) will be in `build/bin/Debug/` (or `Release/`).
+    * **For easier local running**, the `Vertiky.ttf` font and `verification.txt` are copied directly to your `build/` directory. So, when running from VS (which sets the working directory to `build/`), the program will find these resources correctly.
 
 ### 🐧 Linux
 
 1.  **Install Prerequisites ✅**:
     * Open your terminal.
-    * **CMake, C++ Compiler (g++), Git**:
+    * **CMake, C++ Compiler (g++ or Clang), Git**:
         ```bash
         # For Debian/Ubuntu based systems
         sudo apt-get update
         sudo apt-get install build-essential cmake git
-        
-        # For Fedora based systems
-        sudo dnf groupinstall "Development Tools" "Development Libraries" 
-        sudo dnf install cmake git
-        
-        # For Arch Linux based systems
-        sudo pacman -Syu base-devel cmake git
         ```
-    * **SFML and OpenSSL Dependencies**: The `CMakeLists.txt` uses `FetchContent` to download and build SFML from source. However, SFML itself relies on several system libraries, and the project also requires OpenSSL. You need to install their development packages. I included a shell script `setup_linux_dependencies.sh` that does the below for you or you can run the commands manually as below:
-    
-        **Shell Script (Recommended):**
-        ```bash
-        chmod +x setup_linux_dependencies.sh && ./setup_linux_dependencies.sh
-        ```
-
-        **Manual Installation:**
-
-        **Ubuntu/Debian:**
-        ```bash
-        sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libsfml-dev
-        ```
-
-        **Fedora:**
-        ```bash
-        sudo dnf install mesa-libGL-devel libXrandr-devel libXcursor-devel systemd-devel openal-soft-devel libflac-devel libvorbis-devel freetype-devel SFML-devel
-        ```
-
-        **Arch Linux:**
-        ```bash
-        sudo pacman -Syu glu libxrandr libxcursor systemd openal flac libvorbis freetype2 sfml
-        ```
+        *(For Fedora/Arch, you'd use their respective package managers as in your original README.)*
+    * **Dependencies (OpenSSL & SFML System Libraries)**:
+        * SFML is built from source by CMake's `FetchContent`.
+        * OpenSSL and other SFML system dependencies need to be installed.
+        * **Shell Script (Recommended):** I included a shell script `setup_linux_dependencies.sh` that does the below for you.
+            ```bash
+            chmod +x setup_linux_dependencies.sh && ./setup_linux_dependencies.sh
+            ```
+        * **Manual Installation (Ubuntu/Debian):**
+            ```bash
+            sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libssl-dev
+            ```
+            *(Removed `libsfml-dev` as SFML is built via FetchContent. Added `libssl-dev` for OpenSSL.)*
 
 2.  **Clone the Repository (if not already done) ✨**:
     ```bash
@@ -163,13 +145,16 @@ These steps assume you are using Visual Studio.
     ```bash
     mkdir build
     cd build
-    cmake .. 
+    cmake .. # Configures CMake using the default options. FetchContent will download and build SFML.
     make -j$(nproc) # -j$(nproc) uses all available processor cores for faster compilation
     ```
 
 4.  **Run the Simulation ▶️**:
-    The executable will be in `build/bin/` with the font copied over.
+    The executable (`main`) will be in `build/bin/`.
+    The `Vertiky.ttf` font and `verification.txt` are copied directly to your `build/` directory for convenience.
+    To run the simulation from the `build` directory:
     ```bash
+    cd build
     ./bin/main
     ```
 
@@ -180,6 +165,10 @@ This project runs **seamlessly** on both **Windows** and **Linux**, ensuring acc
 ✅ **Windows** – Tested on Windows 11  
 ✅ **Linux** – Tested on Debian 12 and Ubuntu 22.04  
 
+**Continuous Integration (CI)**:
+[![CMake on multiple platforms](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
+The project utilizes GitHub Actions for automated cross-platform builds and testing on every push and pull request. Check the CI badge above for the latest build status.
+
 **CMake version used**:
 `VERSION 3.28`
 
@@ -187,16 +176,18 @@ This project runs **seamlessly** on both **Windows** and **Linux**, ensuring acc
 `C++17`  
 
 **Dependencies**:  
-`SFML 2.6`, `Vertiky.ttf`  
+`SFML 2.6 (via FetchContent)`, `OpenSSL (via Vcpkg)`, `Vertiky.ttf`  
 
 **Font Requirement**:  
-Vertiky.ttf is bundled with the project and automatically placed next to the executable during the build process. No manual setup is needed.
+`Vertiky.ttf` is bundled with the project and automatically placed in the top-level build directory (`build/`) during the build process, ensuring it's in the debugger's working directory.
 
 **Build System Features**:
 - Cross-platform CMake configuration with platform-specific optimizations
 - Automatic dependency fetching for SFML via CMake FetchContent
-- Smart resource copying that works with both single-config (Make/Ninja) and multi-config (Visual Studio) generators
+- **OpenSSL dependency management via Vcpkg**
+- Smart resource copying that places assets in the top-level build directory for consistent debugger/runtime behavior.
 - RPATH configuration on Linux for better shared library handling
+- **Automated build verification hash generation** (for `build_verification.txt`)
 
 ## 📜 License  
 [![GPLv3 License](https://www.gnu.org/graphics/gplv3-88x31.png)](https://www.gnu.org/licenses/gpl-3.0.html)
@@ -207,35 +198,43 @@ This project is licensed under the **GNU GPL v3**. See the [LICENSE](LICENSE) fi
 This project is open for learning and exploration! Here are a few ways to get involved:  
 We welcome contributions to the Ant Simulation project! To ensure code integrity across platforms, we've implemented an automated verification system.
 
-Getting Started
+**Getting Started for Contributors**
 
-    Clone the repository
-    Run the included setup script:
-
+1.  **Clone the repository**:
+    ```bash
+    git clone [https://github.com/Loksta8/AntSimulation](https://github.com/Loksta8/AntSimulation)
+    cd AntSimulation
+    ```
+2.  **Set up Git Hooks**:
+    ```bash
     python setup_hooks.py
-
+    ```
     This configures the necessary git hooks for the verification system.
 
-How the Verification System Works
+**How the Verification System Works**
 
-Our verification system maintains code integrity through the following process:
+Our verification system helps maintain code integrity through the following processes:
 
-    Pre-commit Hook: Automatically detects changes to source files
-    Hash Generation: Updates the hash value in verification.txt when changes are detected
-    Automatic Inclusion: Adds the updated verification.txt to your commit
-    Build Integration: When building with CMake, the system places the current verification.txt alongside your executable in your build directory
+* **Local Source Code Verification (`verification.txt`)**:
+    * A **Pre-commit Hook** (set up by `setup_hooks.py`) automatically detects changes to source files.
+    * It updates a hash value in `verification.txt` when changes are detected.
+    * This updated `verification.txt` is automatically included in your commit. This file tracks changes to the source code itself.
+* **Built Executable Verification (`build_verification.txt`)**:
+    * When building with CMake, a separate mechanism automatically generates a SHA256 hash of your main executable.
+    * This hash is stored in `build_verification.txt` in your build directory.
+    * This file provides a verifiable checksum of the built program, ensuring its integrity and consistency with the build process.
+    * For Pull Requests, this `build_verification.txt` is uploaded as an artifact in the CI pipeline for easy verification by maintainers.
 
-This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed.
-Contribution Workflow
+This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed after committing.
 
-    Make your code changes
-    Commit your changes (the hook handles verification automatically)
-    Push your changes (including the updated verification hash)
-    Submit a pull request
+**Contribution Workflow**
+
+1.  **Make your code changes**.
+2.  **Commit your changes** (the hook handles `verification.txt` automatically).
+3.  **Push your changes** (including the updated `verification.txt`).
+4.  **Submit a pull request**. The CI pipeline will automatically build your changes and generate a `build_verification.txt` artifact for integrity checking.
 
 The verification system will help maintain project integrity across different development environments and platforms.
-
-
 
 ### 🐜 How to Contribute  
 1.  **Fork the repository** and clone your version.  
