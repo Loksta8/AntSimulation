@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # ---------------------------
-# SFML via FetchContent
+# SFML via FetchContent (Reverted)
 # ---------------------------
 # This will download and build SFML directly within your project's build tree.
 include(FetchContent)
@@ -37,16 +37,15 @@ FetchContent_Declare(SFML
     GIT_SHALLOW ON
     EXCLUDE_FROM_ALL
     SYSTEM
-	# NEW: Pass C++ standard and compiler flags explicitly to SFML's build
+    # NEW: Pass C++ standard and compiler flags explicitly to SFML's build
     CMAKE_ARGS
         -DCMAKE_CXX_STANDARD=17
         -DCMAKE_CXX_STANDARD_REQUIRED=ON
         -DCMAKE_CXX_EXTENSIONS=OFF
         # For Visual Studio 2022 (v143 toolset)
         -DCMAKE_GENERATOR_TOOLSET=v143
-	)
+)
 FetchContent_MakeAvailable(SFML)
-
 
 # ---------------------------
 # Copy Resource Files to Output
@@ -61,7 +60,6 @@ set(RESOURCE_FILES
 # Custom target to copy all resources to the output directory after a build
 add_custom_target(copy_resources ALL)
 
-
 foreach(resource ${RESOURCE_FILES})
     # Get just the filename part (e.g., "Vertiky.ttf" from "Fonts/Vertiky.ttf")
     get_filename_component(resource_name ${resource} NAME)
@@ -69,11 +67,10 @@ foreach(resource ${RESOURCE_FILES})
     # Destination directory is ALWAYS CMAKE_CURRENT_BINARY_DIR.
     # This ensures resources are in the project's top-level build folder (e.g., build/) on all platforms,
     # matching the common working directory for tests and debugger launches.
-    set(destination_base_dir "${CMAKE_CURRENT_BINARY_DIR}") # This is always the project's build/ folder
+    set(destination_base_dir "${CMAKE_CURRENT_BINARY_DIR}") # This is always your project's build/ folder
     
     add_custom_command(
         TARGET copy_resources POST_BUILD
-        # No 'make_directory' for 'resource_dir_part' as we don't want the subfolder (e.g., 'Fonts/') in the build/ folder
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/${resource}" # Source is original path (e.g., "Fonts/Vertiky.ttf")
             "${destination_base_dir}/${resource_name}" # Destination is base dir + just the filename (e.g., "build/Vertiky.ttf")
@@ -90,15 +87,22 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp)
 add_executable(main ${SRC_FILES})
 
 # ---------------------------
-# Dependency Configurations
+# Dependency Configurations (ALL VIA VCPKG eventually)
 # ---------------------------
 
-# OpenSSL Configuration (STILL VIA VCPKG, as it works)
+# OpenSSL Configuration
+# find_package will find OpenSSL via the CMAKE_TOOLCHAIN_FILE (vcpkg)
 find_package(OpenSSL REQUIRED)
+
+
+# SFML Configuration
+# ideally find_package will find SFML via the CMAKE_TOOLCHAIN_FILE (vcpkg)
+# Common ones are Graphics, Window, System, Audio, Network.
+#find_package(SFML REQUIRED COMPONENTS graphics window system)
 
 # SFML Configuration (Now via FetchContent - Direct Linking)
 # When FetchContent_MakeAvailable(SFML) is used, SFML is built into SFML_BINARY_DIR.
-# We will manually add include directories and link libraries.
+# Need to manually add include directories and link libraries until I figure out if its just local machine problem unique to me. Eventually I'll get everything more uniform for both OS's to make it easier
 
 # Add SFML's include directories so the compiler can find headers like SFML/Graphics.hpp
 target_include_directories(main PRIVATE
@@ -113,24 +117,23 @@ link_directories(
     "${SFML_BINARY_DIR}/bin" # For DLLs on Windows (Release/Debug variants if multi-config)
 )
 
-# Link the executable against SFML's component libraries by their direct names.
-# These names (e.g., sfml-graphics) correspond to the .lib files in the directories above.
+# Link the executable against the required libraries
 target_link_libraries(main PRIVATE
     sfml-graphics   # For SFML/Graphics.hpp
     sfml-window     # For windowing functionality
     sfml-system     # For core system utilities
-    # Add other SFML modules if the project uses them (e.g., sfml-audio, sfml-network)
     
     # OpenSSL components provided by find_package(OpenSSL) from vcpkg
     OpenSSL::SSL
     OpenSSL::Crypto
 )
 
-# Make sure resources are copied before building the app
+# Make sure fonts are copied before building the app
 add_dependencies(main copy_resources)
 
 # ---------------------------
 # Platform-specific post-build steps
+# (OpenAL DLL copying will no longer be needed when vcpkg manages SFML's DLLs)
 # ---------------------------
 
 if(WIN32)
@@ -159,16 +162,16 @@ if(WIN32)
     )
 elseif(UNIX AND NOT APPLE)
     # Linux-specific configurations
+    # Vcpkg's toolchain handles dependencies like Threads and RPATH for its installed libraries.
+    # If build errors related to Threads or RPATH appear, re-add specific find_package/set_target_properties here if needed.
     # Find threads package (often required on Linux)
-    find_package(Threads REQUIRED)
-    target_link_libraries(main PRIVATE Threads::Threads)
-
+    #find_package(Threads REQUIRED)
+    #target_link_libraries(main PRIVATE Threads::Threads)
     # Add RPATH for better library handling
-    set_target_properties(main PROPERTIES
-        INSTALL_RPATH "$ORIGIN"
-        BUILD_WITH_INSTALL_RPATH TRUE
-    )
-
+    #set_target_properties(main PROPERTIES
+    #    INSTALL_RPATH "$ORIGIN"
+    #    BUILD_WITH_INSTALL_RPATH TRUE
+    #)
     # Build Verification Hash on Unix (Linux/macOS)
     add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Generating build verification hash on Unix..."
@@ -191,6 +194,6 @@ install(FILES ${RESOURCE_FILES}
 
 # Install the build verification file as well, if desired
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/build_verification.txt"
-    DESTINATION bin # Or wherever you want to install it
+    DESTINATION bin
     OPTIONAL # Don't fail if the file doesn't exist (e.g., if build fails before hash is generated)
 )
