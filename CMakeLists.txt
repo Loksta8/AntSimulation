@@ -143,15 +143,12 @@ if(WIN32)
     )
 
     # Build Verification Hash on Windows
-    add_custom_command(TARGET main POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "Generating build verification hash on Windows..."
-        COMMAND powershell -Command " \
-            \$hash = (CertUtil -hashfile '$<TARGET_FILE:main>' SHA256)[1]; \
-            \$hash = \$hash.Replace(' ',''); \
-            Set-Content -Path '${CMAKE_BINARY_DIR}/build_verification.txt' -Value \$hash \
-        "
-        COMMENT "Writing SHA256 hash of main executable to build_verification.txt"
-    )
+# Build Verification Hash on Windows
+add_custom_command(TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Generating build verification hash on Windows..."
+    COMMAND powershell -File "${CMAKE_SOURCE_DIR}/generate_hash.ps1" "$<TARGET_FILE:main>" "${CMAKE_BINARY_DIR}/build_verification.txt"
+    COMMENT "Writing SHA256 hash of main executable to build_verification.txt"
+)
 elseif(UNIX AND NOT APPLE)
     # Linux-specific configurations
     # Vcpkg's toolchain handles dependencies like Threads and RPATH for its installed libraries.
