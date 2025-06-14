@@ -47,16 +47,6 @@ jobs:
         echo "Binaries in:"
         ls -R build/bin || dir build\\bin
 
-    # These hash generation steps should now work with the updated PowerShell logic
-    - name: Generate build verification hash
-      if: runner.os == 'Windows'
-      shell: powershell
-      run: |
-        $hash = (CertUtil -hashfile '${{github.workspace}}/build/bin/main.exe' SHA256)[1]
-        $hash = $hash.Replace(' ','')
-        Set-Content -Path '${{github.workspace}}/build/build_verification.txt' -Value $hash
-
-
     - name: Display SHA256 hash (Linux)
       if: runner.os == 'Linux'
       run: |
