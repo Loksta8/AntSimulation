@@ -30,7 +30,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         chmod +x setup_linux_dependencies.sh
-        ./setup_linux_dependencies.sh # Run your script here
+        ./setup_linux_dependencies.sh
 
     - name: Add MSBuild to PATH
       if: runner.os == 'Windows'
