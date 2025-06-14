@@ -1,252 +1,103 @@
-# 🐜 Ant Simulation - Debug/Development Version
 
-[![CMake on multiple platforms](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
-![Cross-Platform](https://img.shields.io/badge/Cross%20Platform-Windows%20%7C%20Linux-success)
-![SFML](https://img.shields.io/badge/Dependency-SFML%202.6-green)
-![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg) 
+# README_DEBUG_FOR_DEVELOPERS.md
 
-**🎯 PURPOSE**:
-To simulate an ant colony in search of food using SFML for graphics.
+## 🐜 Developer-Focused Overview
 
-**💡 BACKGROUND**:
-- This project utilizes SFML for graphical rendering to create a realistic simulation of ant colony behavior. The goal is to model key characteristics such as foraging, pheromone trails, colony growth, and environmental interactions. I (Logan Herrera) am the original author of this project.
+This document provides technical details for developers actively working on and debugging the Ant Simulation project. It expands on the standard `README.md` with a focus on the build system, dependency management, and debugging environments. The project's purpose is to simulate an ant colony in search of food using SFML for graphics.
 
-The current simulation includes the following features:
-* **Variable Food Amounts**: Food sources are depleted gradually as ants find the food and take it back to their colony.
-* **Ant Lifespan & Death**: Ants have a finite lifespan and are removed upon death. Gradually the ants die off.
-* **Multiple Colonies**: The simulation supports multiple independent ant colonies, each with distinct colors. They currently do not interact yet.
-* **Separate Pheromone Grids**: Each colony lays and follows its own distinct pheromone trails.
-* **Controlled Colony Growth**: Colonies require specific food amounts to spawn new ants.
-* **Enhanced Metrics Display**: You can monitor Total Live Ants, Peak Population, Total Deaths, and remaining Food Sources.
-* **Optimized Grid Scaling**: The simulation can handle larger grid sizes (controlled by `Environment::GRID_SIZE`). The grid data structures were moved from stack to heap (switched from C-style arrays to `std::vector`).
-* **Refined Ant Foraging Behavior**: Ants now return home more directly and efficiently after finding food.
-* **Automatic & Manual Simulation Reset**: The simulation will restart after a set delay if all food is gone or all ants die, or if the user presses the 'R' key.
-* **Mouse & Keyboard Functionality**: Zooming in and out, and panning work via mouse scroll wheel, mouse click-hold-and-drag, and arrow keys (Up/Down for zoom, Left/Right/A/D/W/S for pan).
+#### Key Technical Stack
+* **Language**: C++17
+* **Build System**: CMake (version 3.28 or newer)
+* **Graphics**: SFML 2.6 (managed via CMake's `FetchContent`)
+* **Includes**:  Vcpkg package manager for easy open-source library importing via `vcpkg.json`
+* **Author**: Logan Herrera
 
-![Ant Simulation GIF](https://raw.githubusercontent.com/Loksta8/AntSimulation/main/AntSim.gif)
+---
 
-## 🚀 Getting Started
+## 🛠️ Deep Dive: Build System & Dependencies
 
-1.  Clone the repository: `git clone https://github.com/Loksta8/AntSimulation`
-2.  Follow the platform-specific build instructions below.
-3.  Run the simulation from your `build/` directory using `./bin/main` (Linux) or `./AntSimulation.exe` (Windows Debug/Release).
+This project uses a cross-platform CMake configuration designed for consistency across Windows and Linux.
 
-## 🎮 Simulation Controls (Detailed)
+### CMake Configuration
 
-This section explains all controls for navigating and interacting with the Ant Simulation.
+* **`CMakePresets.json`**: This file is the primary driver for configuration. It ensures that all developers use the same settings. The `default-windows` preset is configured for Visual Studio 2022. Visual Studio automatically detects and uses this preset when you open the project folder.
+* **`FetchContent` for SFML**: The project does **not** require a manual installation of SFML. CMake's `FetchContent` module automatically downloads and builds SFML version 2.6 from source during the CMake configuration step.
+    * On Linux, you still need to install SFML's own dependencies (e.g., `libgl1-mesa-dev`, `libopenal-dev`, etc.). A helper script, `setup_linux_dependencies.sh`, is provided to do this.
+* **Resource Management**: To simplify debugging and local execution, essential resources are copied directly into the top-level `build/` directory during the build process. This includes:
+    * `Vertiky.ttf` (font)
+    * `build_verification.txt`
+* **Build Verification**: A `build_verification.txt` file is generated upon a successful build. This is used to ensure code integrity, especially for contributions. It is part of the automated build verification hash generation feature in Github Actions Workflow.
 
-* **Zoom In/Out**:
-    * **Mouse Scroll Wheel**: Scroll up to zoom in, scroll down to zoom out.
-    * **Up Arrow Key**: Zoom in.
-    * **Down Arrow Key**: Zoom out.
-* **Pan View (Move Camera)**:
-    * **Mouse Click-Hold-and-Drag**: Click and hold the left mouse button, then drag the mouse to move the view.
-    * **Left Arrow Key**: Pan left.
-    * **Right Arrow Key**: Pan right.
-    * **'A' Key**: Pan left.
-    * **'D' Key**: Pan right.
-    * **'W' Key**: Pan up.
-    * **'S' Key**: Pan down.
-* **Reset Simulation**:
-    * **'R' Key**: Manually reset the simulation to its initial state. The simulation also auto-resets after a delay if all food is gone or all ants die.
+### Dependency Management
 
-## 🛠️ Building the Project
+* **Vcpkg (Windows)**:
+    * Vcpkg is used to manage dependencies on Windows. It must be bootstrapped and integrated with Visual Studio (`vcpkg integrate install`) for the project to build correctly.
+    * The `vcpkg.json` file is included to automatically install any listed libraries when CMake runs. While currently empty, it is set up for future dependencies. The mention of `openssl` in the documentation is purely an example and is not a project requirement.
+* **System Libraries (Linux)**:
+    * On Linux, dependencies required by SFML must be present on the system. The manual installation commands for Debian/Ubuntu, Fedora, and Arch are provided for this purpose.
 
-### ✅ Prerequisites (All Platforms)
+---
 
-* **CMake**: Version 3.28 or newer. Download from [cmake.org](https://cmake.org/download/).
-* **C++17 Compiler**:
-    * Windows: Visual Studio 2022 (MSVC).
-    * Linux: GCC (g++) or Clang.
-* **Git**: For cloning the repository.
-* **Python 3**: Required for setting up Git hooks (see **Contributing** section).
+## 🚀 Debugging Guide
 
-### 🪟 Windows (Visual Studio)
+Correctly configuring the debugger's working directory is crucial for the application to find its resources.
 
-These steps assume you are using Visual Studio 2022.
+### Working Directory
+The application executable expects its working directory to be the **top-level `build/` folder**. Both the font (`Vertiky.ttf`) and verification file are copied here, and the executable is designed to look in this location.
 
-1.  **Clone the Repository ✨**:
+### Windows (Visual Studio 2022)
+* **Configuration**: When using the `Windows Default Build` preset, Visual Studio automatically sets the correct working directory for debugging.
+* **Startup Project**: Ensure the `main` target is set as the "Startup Project" in the Solution Explorer.
+* **Running**: You can run the simulation directly by pressing the green Play button (Start Debugging).
+* **Executable Location**: The compiled binary, `AntSimulation.exe`, is located in `build/bin/Debug/` or `build/bin/Release/`.
+
+### Linux (GDB / VS Code / CLion)
+* **Executable Location**: The executable, `main`, is located in `build/bin/`.
+* **Running from Terminal**: To run correctly, you must launch the executable from within the `build` directory:
     ```bash
-    git clone [https://github.com/Loksta8/AntSimulation](https://github.com/Loksta8/AntSimulation)
-    cd AntSimulation
-    ```
-
-2.  **Set up Vcpkg for Dependencies**:
-    * **Clone Vcpkg**: Open an **Administrator Command Prompt** or **PowerShell** and navigate to your desired installation location (e.g., `C:\`).
-        ```bash
-        cd C:\
-        git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
-        cd vcpkg
-        ```
-    * **Bootstrap Vcpkg**:
-        ```bash
-        .\bootstrap-vcpkg.bat
-        ```
-    * **Integrate Vcpkg with Visual Studio**:
-        ```bash
-        .\vcpkg integrate install
-        ```
-    * **Install Dependencies**: Vcpkg manages OpenSSL. Your project's `vcpkg.json` automatically lists `openssl` for installation when CMake runs.
-        ```bash
-        # This command is technically optional as CMake will trigger it, but useful to know.
-        .\vcpkg.exe install openssl:x64-windows
-        ```
-        *Note: If you encounter permissions errors, ensure your Command Prompt/PowerShell is running as Administrator. If you face persistent issues, try reinstalling vcpkg to a simpler path like `C:\vcpkg` instead of `C:\Program Files\vcpkg`.*
-
-3.  **Configure CMake with `CMakePresets.json` ⚙️**:
-    This project uses `CMakePresets.json` for easy configuration across environments.
-    * **Open Visual Studio**: Launch Visual Studio 2022.
-    * **Open the Project**: Go to `File > Open > CMake...` and select the root directory of your cloned repository (e.g., `C:\path\to\AntSimulation`).
-    * **Select a Preset**: Visual Studio will automatically detect `CMakePresets.json`. In the toolbar, select the `Windows Default Build` preset (or "default-windows") from the "Presets" dropdown.
-    * **Configure**: Visual Studio will automatically configure CMake using the preset. You can monitor the "Output" window.
-    * *(Optional: If you prefer command line, open a "Developer Command Prompt for VS 2022", navigate to your project root, and run: `cmake --preset default-windows`)*
-
-4.  **Build in Visual Studio 🏗️**:
-    * Once CMake configuration is complete, your project should appear in the Solution Explorer.
-    * Right-click on the `main` target in the Solution Explorer and select "Set as Startup Project".
-    * Build the project (e.g., `Build > Build Solution` or `Ctrl+Shift+B`).
-
-5.  **Run the Simulation ▶️**:
-    * Run the `main` project directly from Visual Studio (e.g., `Debug > Start Debugging`, or click the green Play button ▶️).
-    * The executable (`AntSimulation.exe`) will be in `build/bin/Debug/` (or `Release/`).
-    * **For easier local running**, the `Vertiky.ttf` font and `verification.txt` are copied directly to your `build/` directory. So, when running from VS (which sets the working directory to `build/`), the program will find these resources correctly.
-
-### 🐧 Linux
-
-1.  **Install Prerequisites ✅**:
-    * Open your terminal.
-    * **CMake, C++ Compiler (g++ or Clang), Git**:
-        ```bash
-        # For Debian/Ubuntu based systems
-        sudo apt-get update
-        sudo apt-get install build-essential cmake git
-        ```
-        *(For Fedora/Arch, you'd use their respective package managers as in your original README.)*
-    * **Dependencies (OpenSSL & SFML System Libraries)**:
-        * SFML is built from source by CMake's `FetchContent`.
-        * OpenSSL and other SFML system dependencies need to be installed.
-        * **Shell Script (Recommended):** I included a shell script `setup_linux_dependencies.sh` that does the below for you.
-            ```bash
-            chmod +x setup_linux_dependencies.sh && ./setup_linux_dependencies.sh
-            ```
-        * **Manual Installation (Ubuntu/Debian):**
-            ```bash
-            sudo apt-get install libgl1-mesa-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libfreetype6-dev libssl-dev
-            ```
-            *(Removed `libsfml-dev` as SFML is built via FetchContent. Added `libssl-dev` for OpenSSL.)*
-
-2.  **Clone the Repository (if not already done) ✨**:
-    ```bash
-    git clone [https://github.com/Loksta8/AntSimulation](https://github.com/Loksta8/AntSimulation)
-    cd AntSimulation
-    ```
-
-3.  **Configure and Build with CMake ⚙️**:
-    ```bash
-    mkdir build
-    cd build
-    cmake .. # Configures CMake using the default options. FetchContent will download and build SFML.
-    make -j$(nproc) # -j$(nproc) uses all available processor cores for faster compilation
-    ```
-
-4.  **Run the Simulation ▶️**:
-    The executable (`main`) will be in `build/bin/`.
-    The `Vertiky.ttf` font and `verification.txt` are copied directly to your `build/` directory for convenience.
-    To run the simulation from the `build` directory:
-    ```bash
-    cd build
+    cd build/
     ./bin/main
     ```
-
-## ℹ️ Project Details
-
-## 🌍 Cross-Platform Compatibility  
-This project runs **seamlessly** on both **Windows** and **Linux**, ensuring accessibility across different operating systems!  
-✅ **Windows** – Tested on Windows 11  
-✅ **Linux** – Tested on Debian 12 and Ubuntu 22.04  
-
-**Continuous Integration (CI)**:
-[![CMake on multiple platforms](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
-The project utilizes GitHub Actions for automated cross-platform builds and testing on every push and pull request. Check the CI badge above for the latest build status.
-
-**CMake version used**:
-`VERSION 3.28`
-
-**Compiler Standard**:  
-`C++17`  
-
-**Dependencies**:  
-`SFML 2.6 (via FetchContent)`, `OpenSSL (via Vcpkg)`, `Vertiky.ttf`  
-
-**Font Requirement**:  
-`Vertiky.ttf` is bundled with the project and automatically placed in the top-level build directory (`build/`) during the build process, ensuring it's in the debugger's working directory.
-
-**Build System Features**:
-- Cross-platform CMake configuration with platform-specific optimizations
-- Automatic dependency fetching for SFML via CMake FetchContent
-- **OpenSSL dependency management via Vcpkg**
-- Smart resource copying that places assets in the top-level build directory for consistent debugger/runtime behavior.
-- RPATH configuration on Linux for better shared library handling
-- **Automated build verification hash generation** (for `build_verification.txt`)
-
-## 📜 License  
-[![GPLv3 License](https://www.gnu.org/graphics/gplv3-88x31.png)](https://www.gnu.org/licenses/gpl-3.0.html)
-This project is licensed under the **GNU GPL v3**. See the [LICENSE](LICENSE) file for details.
-
-## 🤝 Contributing
-
-This project is open for learning and exploration! Here are a few ways to get involved:  
-We welcome contributions to the Ant Simulation project! To ensure code integrity across platforms, we've implemented an automated verification system.
-
-**Getting Started for Contributors**
-
-1.  **Clone the repository**:
-    ```bash
-    git clone [https://github.com/Loksta8/AntSimulation](https://github.com/Loksta8/AntSimulation)
-    cd AntSimulation
+* **IDE Configuration (VS Code Example)**: When setting up a `launch.json` file for debugging in an IDE like VS Code, you must explicitly set the Current Working Directory (`cwd`).
+    ```json
+    {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "(gdb) Launch",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/build/bin/main",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/build",
+                "environment": [],
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ]
+            }
+        ]
+    }
     ```
-2.  **Set up Git Hooks**:
-    ```bash
-    python setup_hooks.py
-    ```
-    This configures the necessary git hooks for the verification system.
 
-**How the Verification System Works**
+---
 
-Our verification system helps maintain code integrity through the following processes:
+## 🤝 Developer Contribution Workflow
 
-* **Local Source Code Verification (`verification.txt`)**:
-    * A **Pre-commit Hook** (set up by `setup_hooks.py`) automatically detects changes to source files.
-    * It updates a hash value in `verification.txt` when changes are detected.
-    * This updated `verification.txt` is automatically included in your commit. This file tracks changes to the source code itself.
-* **Built Executable Verification (`build_verification.txt`)**:
-    * When building with CMake, a separate mechanism automatically generates a SHA256 hash of your main executable.
-    * This hash is stored in `build_verification.txt` in your build directory.
-    * This file provides a verifiable checksum of the built program, ensuring its integrity and consistency with the build process.
-    * For Pull Requests, this `build_verification.txt` is uploaded as an artifact in the CI pipeline for easy verification by maintainers.
+Contributions are welcome. The workflow is designed to be straightforward while maintaining code integrity.
+> [!IMPORTANT]  
+> Read the CONTRIBUTING.md for full details.
 
-This seamless process ensures all contributors maintain consistent code verification without manual intervention. The verification files remain in your build directory and don't need to be manually managed after committing.
 
-**Contribution Workflow**
 
-1.  **Make your code changes**.
-2.  **Commit your changes** (the hook handles `verification.txt` automatically).
-3.  **Push your changes** (including the updated `verification.txt`).
-4.  **Submit a pull request**. The CI pipeline will automatically build your changes and generate a `build_verification.txt` artifact for integrity checking.
-
-The verification system will help maintain project integrity across different development environments and platforms.
-
-### 🐜 How to Contribute  
-1.  **Fork the repository** and clone your version.  
-2.  **Explore the code** and get familiar with how the ant simulation works.  
-3.  **Suggest improvements**: Whether it's optimizing algorithms, refining ant behaviors, or adding new features, feel free to propose ideas! I would like to make soldier ants eventually!
-4.  **Submit a pull request** if you make meaningful changes.  
-
-### 🚀 Ideas for Contributors  
--   Improve pheromone decay mechanics for more realistic foraging.  
--   Implement inter-colony interactions or competition.
--   Add UI enhancements for easier metric tracking.  
--   Optimize performance for larger-scale simulations.  
--   Expand documentation with deeper explanations or diagrams.  
-
-If you just want to **ask questions or brainstorm ideas**, opening a discussion or issue is always welcome! Thanks and enjoy the ants. I've been keeping it running as a screen saver haha! 🖥️🐜💾
+1.  **Fork & Clone**: Fork the repository on GitHub and clone your fork locally.
+2.  **Make Changes**: Implement your features or bug fixes. Ideas for contributions include improving pheromone mechanics, implementing inter-colony interactions, or adding UI enhancements.
+3.  **Build & Test**: Ensure the project builds successfully on your platform. This will generate/update the `build_verification.txt` file.
+4.  **Commit & Push**: Commit your changes, including any modifications to the verification file.
+5.  **Submit Pull Request**: Open a pull request against the main repository for review. The CI pipeline, which runs on GitHub Actions, will automatically test the build on Windows and Linux platforms.

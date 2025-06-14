@@ -1,0 +1,75 @@
+name: Build AntSimulation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up CMake
+      uses: jwlawson/actions-setup-cmake@v1
+      with:
+        cmake-version: '3.28.3'
+
+    - name: Set up Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Install dependencies on Linux
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libx11-dev libxcursor-dev libxi-dev libxrandr-dev \
+          libudev-dev libgl1-mesa-dev
+
+    - name: Add MSBuild to PATH
+      if: runner.os == 'Windows'
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Configure CMake
+      run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build build
+
+    - name: List Build Output
+      run: |
+        echo "Binaries in:"
+        ls -R build/bin || dir build\\bin
+
+    - name: Display SHA256 hash (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        echo "Generated build verification hash:"
+        cat build/build_verification.txt || echo "Hash not found."
+
+    - name: Display SHA256 hash (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        echo "Generated build verification hash:"
+        type build\build_verification.txt || echo "Hash not found."
+
+    - name: Upload Executable Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AntSimulation-${{ matrix.os }}
+        path: build/bin/*
+
+    - name: Upload Build Hash
+      uses: actions/upload-artifact@v4
+      with:
+        name: BuildHash-${{ matrix.os }}
+        path: |
+          build/build_verification.txt

@@ -54,7 +54,6 @@ FetchContent_MakeAvailable(SFML)
 # Define all resource files that the executable needs at runtime
 set(RESOURCE_FILES
     "Fonts/Vertiky.ttf"
-    "verification.txt"
 )
 
 # Custom target to copy all resources to the output directory after a build
@@ -90,10 +89,6 @@ add_executable(main ${SRC_FILES})
 # Dependency Configurations (ALL VIA VCPKG eventually)
 # ---------------------------
 
-# OpenSSL Configuration
-# find_package will find OpenSSL via the CMAKE_TOOLCHAIN_FILE (vcpkg)
-find_package(OpenSSL REQUIRED)
-
 
 # SFML Configuration
 # ideally find_package will find SFML via the CMAKE_TOOLCHAIN_FILE (vcpkg)
@@ -123,10 +118,6 @@ target_link_libraries(main PRIVATE
     sfml-window      # For windowing functionality
     sfml-system      # For core system utilities
     # Add other SFML modules if the project uses them (e.g., sfml-audio, sfml-network)
-    
-    # OpenSSL components provided by find_package(OpenSSL) from vcpkg
-    OpenSSL::SSL
-    OpenSSL::Crypto
 )
 
 # Make sure resources are copied before building the app
