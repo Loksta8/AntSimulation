@@ -134,14 +134,14 @@ cd vcpkg
 
 *  **Install Dependencies**: Vcpkg manages all libraries for future ease of use. The project's `vcpkg.json` automatically lists `any libraries the project needs in the future` for installation when CMake runs. Currently there aren't any libraries in there but in case other developers feel like using other libraries with the project, the `vcpkg.json` is where you can list them. 
 
-```markdown
+
 > [!TIP]
 > IF you do happen to bring in a new library as mentioned above,
 > this command is technically optional as CMake will trigger it.
 > Either way it's useful to know, using openssl library as an example. It is not required by the project.
 > .\vcpkg.exe install openssl:x64-windows
 > 
-```
+
 
 
 
@@ -344,7 +344,7 @@ In the future other libraries can be brought in via `vcpkg.json`, and will be ha
 
 - Automatic dependency fetching for SFML via CMake FetchContent
 
--  **OpenSSL dependency management via Vcpkg**
+-  **Dependency management ready via Vcpkg**
 
 - Smart resource copying that places assets in the top-level build directory for consistent debugger/runtime behavior.
 
@@ -371,7 +371,7 @@ This project is open for learning and exploration! Here are a few ways to get in
 We welcome contributions to the Ant Simulation project! To ensure code integrity a build_verification.txt gets created upon a successful build.
 
 > [!IMPORTANT]  
-> Read the CONTRIBUTING.md for full details.
+> Read the [Contributing Guidelines](.github/CONTRIBUTING.md) for full details.
 
 
 
