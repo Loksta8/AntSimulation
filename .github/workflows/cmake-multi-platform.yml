@@ -47,6 +47,16 @@ jobs:
         echo "Binaries in:"
         ls -R build/bin || dir build\\bin
 
+    # These hash generation steps should now work with the updated PowerShell logic
+    - name: Generate Build Hash (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        # Ensure the bin directory exists before attempting to hash
+        mkdir -Force build/bin
+        # Generate the hash using Get-FileHash and save it to build_verification.txt
+        (Get-FileHash -Algorithm SHA256 'build/bin/main.exe').Hash | Set-Content 'build/build_verification.txt'
+      shell: pwsh
+
     - name: Display SHA256 hash (Linux)
       if: runner.os == 'Linux'
       run: |

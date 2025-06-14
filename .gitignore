@@ -35,6 +35,7 @@
 BUILD
 build
 out
+vcpkg_installed
 .cache
 .idea
 .vs
