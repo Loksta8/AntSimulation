@@ -8,11 +8,20 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
+    name: Build on ${{ matrix.os }} ${{ matrix.compiler || '' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+            cc: gcc
+            cxx: g++
+          - os: ubuntu-latest
+            compiler: clang
+            cc: clang
+            cxx: clang++
+          - os: windows-latest
 
     steps:
     - name: Checkout code
@@ -26,17 +35,26 @@ jobs:
     - name: Set up Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
 
-    - name: Install dependencies on Linux # This step runs my setup linux dependencies shell script
+    - name: Install dependencies on Linux
       if: runner.os == 'Linux'
       run: |
         chmod +x setup_linux_dependencies.sh
         ./setup_linux_dependencies.sh
+        
+        # Install Clang if needed
+        if [ "${{ matrix.compiler }}" = "clang" ]; then
+          sudo apt-get update
+          sudo apt-get install -y clang
+        fi
 
     - name: Add MSBuild to PATH
       if: runner.os == 'Windows'
       uses: microsoft/setup-msbuild@v2
 
     - name: Configure CMake
+      env:
+        CC: ${{ matrix.cc }}
+        CXX: ${{ matrix.cxx }}
       run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
@@ -62,12 +80,12 @@ jobs:
     - name: Upload Executable Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AntSimulation-${{ matrix.os }}
+        name: AntSimulation-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: build/bin/*
 
     - name: Upload Build Hash
       uses: actions/upload-artifact@v4
       with:
-        name: BuildHash-${{ matrix.os }}
+        name: BuildHash-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: |
           build/build_verification.txt
