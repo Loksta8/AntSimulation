@@ -9,7 +9,7 @@
    cd AntSimulation
    ```
 
-2. **Build the project** (see [`README.md`](https://github.com/Loksta8/AntSimulation) for full setup)
+2. **Build the project** (see [`README.md`](https://github.com/Loksta8/AntSimulation/blob/main/README.md) for full setup)
 
    ```bash
    cmake -B build
@@ -67,7 +67,7 @@ This helps maintain project integrity and reproducibility across platforms.
 
 ## 🐜 How to Contribute Ideas
 
-- Open an [Issue](https://github.com/Loksta8/AntSimulation/.github/ISSUE_TEMPLATE) if you:
+- Open an [Issue](https://github.com/Loksta8/AntSimulation/blob/main/.github/ISSUE_TEMPLATE/bug_or_feature_request.md) if you:
 
   - Found a bug 🐞
   - Have an idea 💡
