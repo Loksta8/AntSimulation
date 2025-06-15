@@ -81,7 +81,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: AntSimulation-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
-        path: build/bin/*
+        path: |
+          build/bin/*
+          build/bin/resources/*
 
     - name: Upload Build Hash
       uses: actions/upload-artifact@v4
@@ -89,3 +91,6 @@ jobs:
         name: BuildHash-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: |
           build/build_verification.txt
+    
+
+

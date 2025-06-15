@@ -57,10 +57,64 @@ int main() {
 
     // --- Load a Font ---
     sf::Font font;
-    if (!font.loadFromFile("Vertiky.ttf")) { // Ensure Vertiky.ttf is in your working directory or provide a full path
-        std::cerr << "Error: Could not load font!" << std::endl;
-        return -1; // Exit if font loading fails
+    bool fontLoaded = false;
+
+    // Try multiple locations for the font
+    std::vector<std::string> fontPaths = {
+        "Vertiky.ttf",                    // Current working directory
+        "resources/Vertiky.ttf",          // Resources subdirectory
+        "../resources/Vertiky.ttf",       // One level up resources directory
+        "Fonts/Vertiky.ttf",              // Fonts subdirectory
+        "../Fonts/Vertiky.ttf"            // One level up fonts directory
+    };
+
+    for (const auto& path : fontPaths) {
+        if (font.loadFromFile(path)) {
+            //std::cout << "Successfully loaded font from: " << path << std::endl;
+            fontLoaded = true;
+            break;
+        }
     }
+
+	// If custom font couldn't be loaded, try system fonts as fallback so that the application can still run
+    if (!fontLoaded) {
+        std::cerr << "Warning: Could not load Vertiky.ttf, trying system fonts..." << std::endl;
+
+        std::vector<std::string> systemFontPaths;
+
+#ifdef _WIN32
+        systemFontPaths = {
+            "C:\\Windows\\Fonts\\arial.ttf",
+            "C:\\Windows\\Fonts\\verdana.ttf"
+        };
+#elif defined(__APPLE__)
+        systemFontPaths = {
+            "/System/Library/Fonts/Helvetica.ttc",
+            "/Library/Fonts/Arial.ttf"
+        };
+#else // Linux
+        systemFontPaths = {
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+            "/usr/share/fonts/TTF/Arial.ttf"
+        };
+#endif
+
+        for (const auto& path : systemFontPaths) {
+            if (font.loadFromFile(path)) {
+                std::cout << "Using system font: " << path << std::endl;
+                fontLoaded = true;
+                break;
+            }
+        }
+    }
+
+    if (!fontLoaded) {
+        std::cerr << "Error: Could not load any font! Application will exit." << std::endl;
+        return -1; // Exit if no font could be loaded
+    }
+
+	// --end Load Font---
 
     // --- Create sf::Text objects for displaying metrics ---
     sf::Text populationText;

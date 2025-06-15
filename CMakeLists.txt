@@ -56,24 +56,30 @@ set(RESOURCE_FILES
     "Fonts/Vertiky.ttf"
 )
 
+# Create a resources directory in the output directory
+add_custom_command(
+    OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources
+    COMMENT "Creating resources directory"
+)
+
 # Custom target to copy all resources to the output directory after a build
-add_custom_target(copy_resources ALL)
+add_custom_target(copy_resources ALL DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources)
 
 foreach(resource ${RESOURCE_FILES})
     # Get just the filename part (e.g., "Vertiky.ttf" from "Fonts/Vertiky.ttf")
     get_filename_component(resource_name ${resource} NAME)
-
-    # Destination directory is ALWAYS CMAKE_CURRENT_BINARY_DIR.
-    # This ensures resources are in the project's top-level build folder (e.g., build/) on all platforms,
-    # matching the common working directory for tests and debugger launches.
-    set(destination_base_dir "${CMAKE_CURRENT_BINARY_DIR}") # This is always your project's build/ folder
     
+    # Copy to both the build root and the bin directory
     add_custom_command(
         TARGET copy_resources POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/${resource}" # Source is original path (e.g., "Fonts/Vertiky.ttf")
-            "${destination_base_dir}/${resource_name}" # Destination is base dir + just the filename (e.g., "build/Vertiky.ttf")
-        COMMENT "Copying resource ${resource} to working directory"
+            "${CMAKE_CURRENT_SOURCE_DIR}/${resource}" 
+            "${CMAKE_CURRENT_BINARY_DIR}/${resource_name}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/${resource}" 
+            "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources/${resource_name}"
+        COMMENT "Copying resource ${resource} to working directory and bin/resources"
     )
 endforeach()
 
