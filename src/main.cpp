@@ -79,8 +79,8 @@ int main() {
         "Vertiky.ttf",                    // Current working directory
         "resources/Vertiky.ttf",          // Resources subdirectory
         "../resources/Vertiky.ttf",       // One level up resources directory
-        "Fonts/Vertiky.ttf",              // Fonts subdirectory
-        "../Fonts/Vertiky.ttf"            // One level up fonts directory
+        "Resources/Vertiky.ttf",              // Fonts subdirectory
+        "../Resources/Vertiky.ttf"            // One level up fonts directory
     };
 
     for (const auto& path : fontPaths) {
