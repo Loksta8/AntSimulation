@@ -44,16 +44,31 @@ enum SimulationState {
 };
 
 // Forward declaration for the reset function
-void resetSimulation(std::vector<Colony>& colonies, Environment& env, sf::Clock& gameClock, float cellSize, sf::View& view, float initialZoom);
+void resetSimulation(std::vector<Colony>& colonies, Environment& env, sf::Clock& gameClock, float cellSize, sf::View& view, float initialZoom, const sf::Texture& antTexture);
 
 
 constexpr float CELL_SIZE = static_cast<float>(WINDOW_WIDTH) / Environment::GRID_SIZE;
-const float INITIAL_DEFAULT_ZOOM_OUT = 1.4f; // Default zoom level
+// Was 1.4f, which zooms OUT.
+// 1.0f for no zoom, or 0.8f to zoom IN.
+const float INITIAL_DEFAULT_ZOOM_OUT = 0.8f; // Default zoom level
 
 int main() {
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Ant Colony Simulation");
     window.setFramerateLimit(60);
+
+    // --- Load Ant Texture ---
+    sf::Texture antTexture;
+    if (!antTexture.loadFromFile("ant.png")) { // IMPORTANT: Replace "ant.png" with the path to your image
+        std::cerr << "Error: Could not load ant texture!" << std::endl;
+        return -1;
+    }
+    else if (antTexture.loadFromFile("ant.png")) {
+		std::cout << "Ant texture loaded successfully." << std::endl;
+    }
+    // For crisp pixel art, disable smoothing
+    antTexture.setSmooth(false);
+    // --- End Load Ant Texture ---
 
     // --- Load a Font ---
     sf::Font font;
@@ -150,13 +165,14 @@ int main() {
 
     std::uniform_int_distribution<> grid_distrib(0, Environment::GRID_SIZE - 1);
 
-    sf::Color colony1Color = sf::Color::Black;
-    sf::Color colony2Color = sf::Color::Red;
-    sf::Color colony3Color = sf::Color::Blue;
+    // Lighter color palette
+    sf::Color colony1Color = sf::Color(128, 128, 128); // A medium-light grey instead of black
+    sf::Color colony2Color = sf::Color(255, 100, 100); // A lighter red
+    sf::Color colony3Color = sf::Color(100, 100, 255); // A lighter blue
 
-    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, CELL_SIZE, colony1Color, Colony::nextColonyID++);
-    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, CELL_SIZE, colony2Color, Colony::nextColonyID++);
-    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, CELL_SIZE, colony3Color, Colony::nextColonyID++);
+    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, CELL_SIZE, colony1Color, Colony::nextColonyID++, antTexture);
+    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, CELL_SIZE, colony2Color, Colony::nextColonyID++, antTexture);
+    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, CELL_SIZE, colony3Color, Colony::nextColonyID++, antTexture);
     // --- End Initial Simulation Setup ---
 
 
@@ -323,7 +339,7 @@ int main() {
                 }
                 // Reset the simulation with 'R' key
                 else if (event.key.code == sf::Keyboard::R) {
-                    resetSimulation(colonies, env, clock, CELL_SIZE, view, INITIAL_DEFAULT_ZOOM_OUT);
+                    resetSimulation(colonies, env, clock, CELL_SIZE, view, INITIAL_DEFAULT_ZOOM_OUT, antTexture);
                     currentSimulationState = RUNNING;
                     std::cout << "Simulation reset.\n";
 				}
@@ -354,7 +370,7 @@ int main() {
         else if (currentSimulationState == WAITING_FOR_RESET) {
             float timeRemaining = RESET_DELAY_SECONDS - resetTimerClock.getElapsedTime().asSeconds();
             if (timeRemaining <= 0) {
-                resetSimulation(colonies, env, clock, CELL_SIZE, view, INITIAL_DEFAULT_ZOOM_OUT);
+                resetSimulation(colonies, env, clock, CELL_SIZE, view, INITIAL_DEFAULT_ZOOM_OUT, antTexture);
                 currentSimulationState = RUNNING;
                 std::cout << "Simulation restarted.\n";
             }
@@ -410,21 +426,38 @@ int main() {
                 }
             }
         }
+        
+		// Draw each ant in the colonies
+        for (auto& colony : colonies) { // Must be non-const to modify sprite color
+            for (auto& ant : colony.ants) { // Must be non-const to modify sprite color
 
-        for (const auto& colony : colonies) {
-            for (const auto& ant : colony.ants) {
-                sf::RectangleShape antShapeToDraw(*(ant.shape));
-                antShapeToDraw.setPosition(static_cast<float>(ant.x * CELL_SIZE), static_cast<float>(ant.y * CELL_SIZE));
+                // Color logic
                 sf::Color antColor = ant.getColonyColor();
-                if (ant.hasFood) antColor = sf::Color::Green;
-                if (ant.lifespan < 50) {
-                    int fade = static_cast<int>(ant.lifespan * 5.1f);
-                    antColor = sf::Color(std::max(0, antColor.r - (255 - fade)), std::max(0, antColor.g - (255 - fade)), std::max(0, antColor.b - (255 - fade)), static_cast<sf::Uint8>(fade));
+                if (ant.hasFood) {
+                    antColor = sf::Color::Green;
                 }
-                antShapeToDraw.setFillColor(antColor);
-                window.draw(antShapeToDraw);
+
+                // Lifespan fade effect
+                if (ant.lifespan < 50 && ant.lifespan > 0) {
+                    // Fade to a darker/greyer version of the original color
+                    float fadeRatio = static_cast<float>(ant.lifespan) / 50.f;
+                    antColor.r = static_cast<sf::Uint8>(antColor.r * fadeRatio);
+                    antColor.g = static_cast<sf::Uint8>(antColor.g * fadeRatio);
+                    antColor.b = static_cast<sf::Uint8>(antColor.b * fadeRatio);
+                }
+                else if (ant.lifespan <= 0) {
+                    antColor = sf::Color::Transparent; // Make dead ants invisible
+                }
+
+                ant.sprite.setColor(antColor); // Apply the final color tint
+
+                // The ant's position and rotation are already set by ant.updateGraphics(),
+                // so we just need to draw it.
+                window.draw(ant.sprite);
             }
         }
+
+
         env.renderFood(window);
 
         // Switch to default view for UI elements
@@ -440,20 +473,21 @@ int main() {
     return 0;
 }
 // resetSimulation function to reset and reinitialize the simulation state
-void resetSimulation(std::vector<Colony>& colonies, Environment& env, sf::Clock& gameClock, float cellSize, sf::View& view, float initialZoom) {
+void resetSimulation(std::vector<Colony>& colonies, Environment& env, sf::Clock& gameClock, float cellSize, sf::View& view, float initialZoom, const sf::Texture& antTexture) {
     colonies.clear();
     env.generateFood();
     Colony::nextColonyID = 0;
 
     std::uniform_int_distribution<> grid_distrib(0, Environment::GRID_SIZE - 1);
 
-    sf::Color colony1Color = sf::Color::Black;
-    sf::Color colony2Color = sf::Color::Red;
-    sf::Color colony3Color = sf::Color::Blue;
+    // Lighter color palette
+    sf::Color colony1Color = sf::Color(128, 128, 128); // A medium-light grey instead of black
+    sf::Color colony2Color = sf::Color(255, 100, 100); // A lighter red
+    sf::Color colony3Color = sf::Color(100, 100, 255); // A lighter blue
 
-    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, cellSize, colony1Color, Colony::nextColonyID++);
-    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, cellSize, colony2Color, Colony::nextColonyID++);
-    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, cellSize, colony3Color, Colony::nextColonyID++);
+    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, cellSize, colony1Color, Colony::nextColonyID++, antTexture);
+    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, cellSize, colony2Color, Colony::nextColonyID++, antTexture);
+    colonies.emplace_back(grid_distrib(RandomUtils::getGenerator()), grid_distrib(RandomUtils::getGenerator()), 5, cellSize, colony3Color, Colony::nextColonyID++, antTexture);
 
     float gridWorldDimension = static_cast<float>(Environment::GRID_SIZE) * cellSize;
     view.setSize(gridWorldDimension, gridWorldDimension);

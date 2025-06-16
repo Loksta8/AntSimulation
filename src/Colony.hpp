@@ -50,7 +50,7 @@ public:
     static constexpr float MAX_PHEROMONE_LEVEL = 500.0f; // A cap for pheromone levels
 
     // Constructor
-    Colony(int colonyX, int colonyY, int initialNumAnts, float antsCellSize, const sf::Color& color, int id);
+    Colony(int colonyX, int colonyY, int initialNumAnts, float antsCellSize, const sf::Color& color, int id, const sf::Texture& antTexture);
 
 
     Colony(const Colony&) = delete;
@@ -79,6 +79,7 @@ private:
     float m_antsCellSize;
     int m_antsToSpawnThisTurn;
     void spawnAnts(int numAntsToSpawn);
+	const sf::Texture& m_antTexture; // Texture for the ants
 };
 
 #endif // COLONY_HPP

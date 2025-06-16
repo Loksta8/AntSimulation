@@ -41,7 +41,7 @@ public:
     int homeX, homeY;
 
     // SFML Shape for Rendering Ant
-    std::unique_ptr<sf::RectangleShape> shape;
+    sf::Sprite sprite;
 
     // Lifespan
     int lifespan;
@@ -65,6 +65,7 @@ public:
     // future feature getHealth()
     // future feature getAttackDamage()
 
+	// No longer managing unique_ptr for shape directly in Ant class.
     // --- CRITICAL: Manually define move constructor and move assignment operator ---
      // This removes any ambiguity and forces the compiler to use these specific implementations.
 	// This is necessary because Ant contains a std::unique_ptr, which cannot be copied but can be moved.
@@ -80,7 +81,8 @@ public:
     Ant(int startX, int startY, int colonyX, int colonyY, float antCellSize, const sf::Color& colonyColor,
         std::vector<std::vector<float>>(&foodPheromones), // Reference to colony's food pheromone grid
         std::vector<std::vector<float>>(&returnHomePheromones),// Reference to colony's home pheromone grid
-        int colonyID); 
+        int colonyID,
+        const sf::Texture& antTexture);
 
 
     // Destructor

@@ -26,20 +26,20 @@
 int Colony::nextColonyID = 0;
 
 // Constructor
-Colony::Colony(int colonyX, int colonyY, int initialNumAnts, float antsCellSize, const sf::Color& color, int id)
+Colony::Colony(int colonyX, int colonyY, int initialNumAnts, float antsCellSize, const sf::Color& color, int id, const sf::Texture& antTexture)
     : homeX(colonyX),
     homeY(colonyY),
     peakPopulation(initialNumAnts),
     m_antsCellSize(antsCellSize),
-    m_antsToSpawnThisTurn(0), // Keeping for now will be repurposed later
+    m_antsToSpawnThisTurn(0),
     colonyColor(color),
     id(id),
     foodStored(0),
     totalAntsDied(0),
     foodPheromones(Environment::GRID_SIZE, std::vector<float>(Environment::GRID_SIZE, 0.0f)),
-    returnHomePheromones(Environment::GRID_SIZE, std::vector<float>(Environment::GRID_SIZE, 0.0f))
+    returnHomePheromones(Environment::GRID_SIZE, std::vector<float>(Environment::GRID_SIZE, 0.0f)),
+    m_antTexture(antTexture) // <<< INITIALIZE the texture reference
 {
-
     ants.reserve(initialNumAnts + 100);
     spawnAnts(initialNumAnts);
 }
@@ -61,9 +61,9 @@ void Colony::addFood(unsigned int amount) {
 // Used for deferred spawning
 void Colony::spawnAnts(int numAntsToSpawn) {
     for (int i = 0; i < numAntsToSpawn; i++) {
-        // Pass the colony's color and references to its pheromone grids to the new ant
+        // Pass the colony's color, its pheromone grids, ID, AND the ant texture
         ants.emplace_back(homeX, homeY, homeX, homeY, m_antsCellSize, this->colonyColor,
-            foodPheromones, returnHomePheromones, this->id);
+            foodPheromones, returnHomePheromones, this->id, m_antTexture); // <<< PASS texture
     }
 }
 

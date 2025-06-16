@@ -36,7 +36,8 @@ int Ant::generateRand(int maxValue) {
 Ant::Ant(int startX, int startY, int colonyX, int colonyY, float antCellSize, const sf::Color& colonyColor,
     std::vector<std::vector<float>>& foodPheromones,
     std::vector<std::vector<float>>& returnHomePheromones,
-    int colonyID)
+    int colonyID,
+    const sf::Texture& antTexture)
     : x(startX),
     y(startY),
     prevX(startX),
@@ -55,9 +56,26 @@ Ant::Ant(int startX, int startY, int colonyX, int colonyY, float antCellSize, co
     m_foodPheromones(foodPheromones),
     m_returnHomePheromones(returnHomePheromones)
 {
+    // --- Setup the Sprite ---
+    sprite.setTexture(antTexture); // Apply the texture
 
-    shape = std::make_unique<sf::RectangleShape>(sf::Vector2f(m_cellSize, m_cellSize));
-    shape->setPosition(static_cast<float>(x * m_cellSize), static_cast<float>(y * m_cellSize));
+    // To scale the sprite to the size of a cell, you need its original pixel dimensions
+    float textureWidth = static_cast<float>(antTexture.getSize().x);
+    float textureHeight = static_cast<float>(antTexture.getSize().y);
+
+    // Set the sprite's origin to its center for proper rotation and positioning
+    sprite.setOrigin(textureWidth / 2.f, textureHeight / 2.f);
+	// Define how big each ant sprite should be in the grid
+	float desiredAntSize = m_cellSize * 2.5f; // Adjust this factor as needed for visual clarity
+
+    // Scale the sprite to fit the cell size
+    // might want different scaling for X and Y?
+    sprite.setScale(m_cellSize / textureWidth, m_cellSize / textureHeight);
+
+    // Initial position and color
+    updateGraphics(); // This will set the sprite's initial position
+    sprite.setColor(m_colonyColor); // Use the base colony color initially
+
     recentPositions.assign(1, std::make_pair(x, y));
 }
 
@@ -81,7 +99,7 @@ Ant::Ant(Ant&& other) noexcept
     m_colonyID(other.m_colonyID),
     m_foodPheromones(other.m_foodPheromones),
     m_returnHomePheromones(other.m_returnHomePheromones),
-    shape(std::move(other.shape)),
+    sprite(std::move(other.sprite)),
     recentPositions(std::move(other.recentPositions))
 {
 }
@@ -108,7 +126,7 @@ Ant& Ant::operator=(Ant&& other) noexcept {
 
         // References cannot be reassigned. They must refer to the same object throughout their lifetime.
         // Move the unique_ptr content
-        shape = std::move(other.shape);
+        sprite = std::move(other.sprite);
         // Move the deque content
         recentPositions = std::move(other.recentPositions);
 
@@ -371,7 +389,7 @@ void Ant::searchForFood(Environment& env) {
     if (env.checkForFood(x, y)) { // check current cell for food has food when env.checkForFood returns true
         hasFood = true; // set hasFood to true
         env.removeFood(x, y); // remove the food source from the environment because the ant picked it up
-        shape->setFillColor(sf::Color::Green); // Ants with food turn Green colored when returning home
+        sprite.setColor(sf::Color::Green); // Ants with food turn Green colored when returning home
         return;
     }
 
@@ -394,7 +412,7 @@ void Ant::searchForFood(Environment& env) {
             this->y = checkY;
             hasFood = true; // cell checkX,checkY has food set to true
             env.removeFood(checkX, checkY);
-            shape->setFillColor(sf::Color::Green); // Turn ant green since it has food
+            sprite.setColor(sf::Color::Green); // Turn ant green since it has food
             updateGraphics(); // Reflect changes graphically
             return;
         }
@@ -663,7 +681,7 @@ bool Ant::followHomePheromones(Environment& env) {
 void Ant::storeFood(Colony& colony) {
     hasFood = false;
     pheromoneStrength += 10.0f; // Replenish pheromone charge
-    shape->setFillColor(sf::Color::Black);
+    sprite.setColor(m_colonyColor);
     colony.addFood(1);
 }
 
@@ -735,7 +753,15 @@ void Ant::depositHomePheromones(Environment& env) {
 
 // Update SFML Graphics to reflect the ant's current grid position
 void Ant::updateGraphics() {
-    shape->setPosition(static_cast<float>(x * m_cellSize), static_cast<float>(y * m_cellSize));
+    // We position the sprite by its center, so we calculate the center of the grid cell
+    float cellCenterX = (static_cast<float>(x) + 0.5f) * m_cellSize;
+    float cellCenterY = (static_cast<float>(y) + 0.5f) * m_cellSize;
+    sprite.setPosition(cellCenterX, cellCenterY);
+
+    // Optional: Rotate the sprite to match the ant's direction
+    // 0 is North (pointing up, which is -90 degrees in SFML)
+    // and ant image points to the right (0 degrees) by default.
+    sprite.setRotation(static_cast<float>(direction) * 45.f);
 }
 
 // Lifespan & Combat future features
