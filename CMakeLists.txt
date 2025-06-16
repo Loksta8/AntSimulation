@@ -53,7 +53,8 @@ FetchContent_MakeAvailable(SFML)
 
 # Define all resource files that the executable needs at runtime
 set(RESOURCE_FILES
-    "Fonts/Vertiky.ttf"
+    "Resources/Vertiky.ttf"
+	"Resources/ant.png"
 )
 
 # Create a resources directory in the output directory
@@ -79,7 +80,13 @@ foreach(resource ${RESOURCE_FILES})
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/${resource}" 
             "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources/${resource_name}"
-        COMMENT "Copying resource ${resource} to working directory and bin/resources"
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${CMAKE_CURRENT_SOURCE_DIR}/${resource}"
+			"${CMAKE_CURRENT_BINARY_DIR}/bin/Debug/${resource_name}"
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${CMAKE_CURRENT_SOURCE_DIR}/${resource}"
+			"${CMAKE_CURRENT_BINARY_DIR}/bin/Release/${resource_name}"
+        COMMENT "Copying resource ${resource} to working directory and bin/[debugrelease] directories"
     )
 endforeach()
 
