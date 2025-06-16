@@ -19,7 +19,7 @@ To simulate an ant colony in search of food using SFML for graphics.
 
 **💡 BACKGROUND**:
 
-- This project utilizes SFML for graphical rendering to create a realistic simulation of ant colony behavior. The goal is to model key characteristics such as foraging, pheromone trails, colony growth, and environmental interactions. I (Logan Herrera) am the original author of this project.
+- This project utilizes SFML for graphical rendering to create a realistic simulation of ant colony behavior. The goal is to model key characteristics such as foraging, pheromone trails, colony growth, and environmental interactions. I (Logan Herrera) am the original author of this project. There are 3 colonies each with their own unique color (Black, Red, and Blue). As they search for food they leave a trail of pheromones. If they find food, the ant color changes green to show their returning home with food, they also leave a yellowish pheromone trail to alert and lead other ants to the food source that was found. Read more below to find out the simulation controls.
 
   
 

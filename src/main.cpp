@@ -63,9 +63,7 @@ int main() {
         std::cerr << "Error: Could not load ant texture!" << std::endl;
         return -1;
     }
-    else if (antTexture.loadFromFile("ant.png")) {
-		std::cout << "Ant texture loaded successfully." << std::endl;
-    }
+
     // For crisp pixel art, disable smoothing
     antTexture.setSmooth(false);
     // --- End Load Ant Texture ---
