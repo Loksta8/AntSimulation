@@ -59,7 +59,11 @@ The current simulation includes the following features:
 
 3. Run the simulation from your `build/` directory using `./bin/main` (Linux) or `./AntSimulation.exe` (Windows Debug/Release).
 
-  
+## :video_game: **Play with the Program Download from Releases**
+>[!Note]
+> If you do not want to build the project and you just feel like running the program to play around with it, you can download from [Releases](https://github.com/Loksta8/AntSimulation/releases)
+> If you are on Windows you'll need Microsoft's Visual C++ Redistributables runtime libraries, you can get them from [here](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) .
+
 
 ## 🛠️ Building the Project
 
@@ -290,10 +294,7 @@ cd build
 
 ```
 
-5. **Download from Releases**
 
-If you choose not build the project and you just feel like running the program to play around with it, you can download from [Releases](https://github.com/Loksta8/AntSimulation/releases)
-If you are on Windows you'll need Microsoft's Visual C++ Redistributables runtime libraries, you can get them from [here](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) .
   
 
 ## ℹ️ Project Details
