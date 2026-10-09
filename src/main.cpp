@@ -129,7 +129,7 @@ int main() {
 
 	// --end Load Font---
 
-    // --- Create sf::Text objects for displaying metrics ---
+    // --- Create sf::Text objects for displaying metrics (with consistent 40px spacing) ---
     sf::Text populationText;
     populationText.setFont(font);
     populationText.setCharacterSize(28);
@@ -140,13 +140,32 @@ int main() {
     deathText.setFont(font);
     deathText.setCharacterSize(28);
     deathText.setFillColor(sf::Color::Red);
-    deathText.setPosition(10.f, 70.f);
+    deathText.setPosition(10.f, 70.f); // 20px gap from Peak Population line
 
     sf::Text foodText;
     foodText.setFont(font);
-    foodText.setCharacterSize(28);
-    foodText.setFillColor(sf::Color::Blue);
-    foodText.setPosition(10.f, 110.f);
+    foodText.setCharacterSize(32); // Slightly larger for emphasis
+    foodText.setFillColor(sf::Color::Green); // Changed from Blue to Green
+    foodText.setPosition(10.f, 110.f); // 40px gap from Deaths
+
+    // --- Colony-specific text objects (continued with 40px gaps) ---
+    sf::Text greyColonyText;
+    greyColonyText.setFont(font);
+    greyColonyText.setCharacterSize(28);
+    greyColonyText.setFillColor(sf::Color(128, 128, 128)); // Steel Grey
+    greyColonyText.setPosition(10.f, 175.f); // 65px gap from Food (visual group separation)
+
+    sf::Text redColonyText;
+    redColonyText.setFont(font);
+    redColonyText.setCharacterSize(28);
+    redColonyText.setFillColor(sf::Color(255, 100, 100)); // Coral
+    redColonyText.setPosition(10.f, 215.f); // 40px gap from Grey
+
+    sf::Text blueColonyText;
+    blueColonyText.setFont(font);
+    blueColonyText.setCharacterSize(28);
+    blueColonyText.setFillColor(sf::Color(100, 100, 255)); // Cornflower
+    blueColonyText.setPosition(10.f, 255.f); // 40px gap from Coral
 
 	// Text for reset timer
     sf::Text resetTimerText;
@@ -388,6 +407,12 @@ int main() {
         deathText.setString("Total Deaths: " + std::to_string(totalDeaths));
         foodText.setString("Food Sources: " + std::to_string(env.totalFoodSources));
 
+        // --- Update Colony-Specific Text ---
+        // Match colony colors to text
+        greyColonyText.setString("Steel Grey: " + std::to_string(colonies[0].ants.size()) + " ants alive");
+        redColonyText.setString("Coral: " + std::to_string(colonies[1].ants.size()) + " ants alive");
+        blueColonyText.setString("Cornflower: " + std::to_string(colonies[2].ants.size()) + " ants alive");
+
 
         // --- Drawing ---
         window.clear(sf::Color::White);
@@ -463,6 +488,12 @@ int main() {
         window.draw(populationText);
         window.draw(deathText);
         window.draw(foodText);
+
+        // Draw colony-specific text
+        window.draw(greyColonyText);
+        window.draw(redColonyText);
+        window.draw(blueColonyText);
+
         if (currentSimulationState == WAITING_FOR_RESET) {
             window.draw(resetTimerText);
         }
