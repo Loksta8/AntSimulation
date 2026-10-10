@@ -313,9 +313,14 @@ This project runs **seamlessly** on both **Windows** and **Linux**, ensuring acc
 
 **Continuous Integration (CI)**:
 
-[![CMake on multiple platforms](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
+[![Build Status](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/cmake-multi-platform.yml)
 
-The project utilizes GitHub Actions for automated cross-platform builds and testing on every push and pull request. Check the CI badge above for the latest build status.
+
+**Continuous Deployment (CD)**:
+
+[![Release Status](https://github.com/Loksta8/AntSimulation/actions/workflows/release.yml/badge.svg)](https://github.com/Loksta8/AntSimulation/actions/workflows/release.yml)
+
+The project utilizes GitHub Actions for automated cross-platform builds and testing on every push and pull request. Check the CI/CD badge above for the latest build and release status.
 
   
 
