@@ -1,0 +1,76 @@
+name: Release AntSimulation
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers whenever you push a tag like v1.0.0, v1.2.3
+
+permissions:
+  contents: write # Grants permission to create releases and upload assets
+
+jobs:
+  build-and-package:
+    name: Package for ${{ matrix.os }} ${{ matrix.compiler || '' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+            cc: gcc
+            cxx: g++
+            asset_name: AntSimulation-Linux-x64.tar.gz
+          - os: windows-latest
+            asset_name: AntSimulation-Windows-x64.zip
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4.2.2
+
+    - name: Set up CMake
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.28.3'
+
+    - name: Set up Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v5
+
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: |
+        chmod +x setup_linux_dependencies.sh
+        ./setup_linux_dependencies.sh
+
+    - name: Add MSBuild to PATH
+      if: runner.os == 'Windows'
+      uses: microsoft/setup-msbuild@v2.0.0
+
+    - name: Configure CMake
+      env:
+        CC: ${{ matrix.cc }}
+        CXX: ${{ matrix.cxx }}
+      run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build build
+
+    # Create compressed archive on Linux (.tar.gz)
+    - name: Package Release (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        tar -czvf ${{ matrix.asset_name }} -C build/bin .
+
+    # Create compressed archive on Windows (.zip)
+    - name: Package Release (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Compress-Archive -Path build\bin\* -DestinationPath ${{ matrix.asset_name }}
+
+    # Upload packaged binary to GitHub Releases
+    - name: Upload Binary to GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ matrix.asset_name }}
+        generate_release_notes: true
+    
