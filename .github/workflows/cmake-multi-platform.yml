@@ -78,7 +78,7 @@ jobs:
         type build\build_verification.txt || echo "Hash not found."
 
     - name: Upload Executable Artifact
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: AntSimulation-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: |
@@ -86,7 +86,7 @@ jobs:
           build/bin/resources/*
 
     - name: Upload Build Hash
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: BuildHash-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: |
