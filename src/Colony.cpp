@@ -139,10 +139,13 @@ float Colony::getReturnHomePheromoneLevel(int gridX, int gridY) const {
 }
 
 void Colony::updatePheromones() {
+    // Apply decay rate with optional multiplier for tuning
+    float effectiveDecayRate = PHEROMONE_DECAY_RATE * PHEROMONE_DECAY_MULTIPLIER;
+    
     for (int i = 0; i < Environment::GRID_SIZE; ++i) {
         for (int j = 0; j < Environment::GRID_SIZE; ++j) {
             if (foodPheromones[i][j] > 0.001f) {
-                foodPheromones[i][j] *= PHEROMONE_DECAY_RATE;
+                foodPheromones[i][j] *= effectiveDecayRate;
                 if (foodPheromones[i][j] < 0.001f) foodPheromones[i][j] = 0.0f;
             }
             else {
@@ -150,7 +153,7 @@ void Colony::updatePheromones() {
             }
 
             if (returnHomePheromones[i][j] > 0.001f) {
-                returnHomePheromones[i][j] *= PHEROMONE_DECAY_RATE;
+                returnHomePheromones[i][j] *= effectiveDecayRate;
                 if (returnHomePheromones[i][j] < 0.001f) returnHomePheromones[i][j] = 0.0f;
             }
             else {

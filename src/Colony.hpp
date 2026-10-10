@@ -46,8 +46,9 @@ public:
     std::vector<std::vector<float>> returnHomePheromones; // "Home trail" pheromones
 
     // --- Pheromone constants for this colony ---
-	static constexpr float PHEROMONE_DECAY_RATE = 0.98f; // How quickly pheromones fade over time
+    static constexpr float PHEROMONE_DECAY_RATE = 0.98f; // How quickly pheromones fade over time (0.98 = 2% decay per tick)
     static constexpr float MAX_PHEROMONE_LEVEL = 500.0f; // A cap for pheromone levels
+    static constexpr float PHEROMONE_DECAY_MULTIPLIER = 1.0f; // Optional multiplier to speed up/slow down decay (0.5f = half speed, 2.0f = double speed)
 
     // Constructor
     Colony(int colonyX, int colonyY, int initialNumAnts, float antsCellSize, const sf::Color& color, int id, const sf::Texture& antTexture);

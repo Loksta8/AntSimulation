@@ -428,7 +428,7 @@ cd AntSimulation
 
 - Give pointers on how to make a good workflow to make it as easy as possible to contribute.
 
-- Improve pheromone decay mechanics for more realistic foraging.
+- Improve pheromone decay mechanics for more realistic foraging. *(Already implemented with tunable decay rate!)*
 
 - Implement inter-colony interactions or competition.
 
@@ -437,6 +437,8 @@ cd AntSimulation
 - Optimize performance for larger-scale simulations.
 
 - Expand documentation with deeper explanations or diagrams.
+
+- **Tune Simulation Parameters**: Adjust decay rates, pheromone deposit amounts, or lifespan to experiment with colony behavior.
 
   
 

@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iomanip> // For setprecision, showpoint
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -67,6 +68,24 @@ int main() {
     // For crisp pixel art, disable smoothing
     antTexture.setSmooth(false);
     // --- End Load Ant Texture ---
+
+    // --- Display Decay Rate Debug Info ---
+    {
+        float decayMultiplier = 1.0f; // Default, can be tuned in Colony.hpp
+        float decayRate = 0.98f;      // 2% decay per tick
+        
+        float effectiveDecay = decayRate * decayMultiplier;
+        float decayPercent = (1.0f - effectiveDecay) * 100.0f;
+        
+        std::cout << "\n=== PHEROMONE DECAY CONFIGURATION ===" << std::endl;
+        std::cout << std::fixed << std::setprecision(2);
+        std::cout << "Base Decay Rate: " << decayRate << std::endl;
+        std::cout << "Decay Multiplier: " << decayMultiplier << std::endl;
+        std::cout << "Effective Decay: " << effectiveDecay << std::endl;
+        std::cout << "Decay Percentage: " << decayPercent << "% per tick" << std::endl;
+        std::cout << "=== END CONFIGURATION ===" << std::endl << std::endl;
+    }
+    // --- End Display Decay Rate Debug Info ---
 
     // --- Load a Font ---
     sf::Font font;
