@@ -25,15 +25,15 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.2.2
 
     - name: Set up CMake
-      uses: jwlawson/actions-setup-cmake@v1
+      uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.28.3'
 
     - name: Set up Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+      uses: seanmiddleditch/gha-setup-ninja@v5
 
     - name: Install dependencies on Linux
       if: runner.os == 'Linux'
@@ -49,7 +49,7 @@ jobs:
 
     - name: Add MSBuild to PATH
       if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v2.0.0
 
     - name: Configure CMake
       env:
@@ -63,7 +63,7 @@ jobs:
     - name: List Build Output
       run: |
         echo "Binaries in:"
-        ls -R build/bin || dir build\\bin
+        ls -R build/bin || dir build\bin
 
     - name: Display SHA256 hash (Linux)
       if: runner.os == 'Linux'
@@ -78,7 +78,7 @@ jobs:
         type build\build_verification.txt || echo "Hash not found."
 
     - name: Upload Executable Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.4.3
       with:
         name: AntSimulation-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: |
@@ -86,11 +86,8 @@ jobs:
           build/bin/resources/*
 
     - name: Upload Build Hash
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.4.3
       with:
         name: BuildHash-${{ matrix.os }}${{ matrix.compiler && format('-{0}', matrix.compiler) || '' }}
         path: |
           build/build_verification.txt
-    
-
-
