@@ -49,7 +49,7 @@ jobs:
 
     - name: Add MSBuild to PATH
       if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2.0.0
+      uses: microsoft/setup-msbuild@v3.0.0
 
     - name: Configure CMake
       env:
